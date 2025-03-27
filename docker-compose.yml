@@ -11,13 +11,13 @@ services:
       - "19094:9094"  # External
     environment:
       - KAFKA_ENABLE_KRAFT=yes
-      - KAFKA_CFG_ALLOW_PLAINTEXT_LISTENER=yes
-      - KAFKA_CFG_NODE_ID=1
-      - KAFKA_CFG_PROCESS_ROLES=broker,controller
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093
-      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
-      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9092,EXTERNAL://localhost:19094
+      - KAFKA_CFG_ALLOW_PLAINTEXT_LISTENER=yes #Разрешает подключения по незащищенному протоколу PLAINTEXT (без SSL/TLS)
+      - KAFKA_CFG_NODE_ID=1 #Id для ноды кластера
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller #Эта настройка определяет роли (функции), которые выполняет текущий сервер Kafka
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER #Эта настройка определяет, какие listener'ы (сетевые интерфейсы) брокер Kafka будет использовать для внутреннего обмена данными между контроллерами
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9093,2@kafka-2:9093,3@kafka-3:9093 #Эта настройка определяет список контроллеров (нод), которые участвуют в управлении кластером Kafka
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094 #Эта переменная определяет сетевые интерфейсы (listeners), которые Kafka будет использовать для подключения клиентов (продюсеров/консьюмеров) и внутренней коммуникации
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9092,EXTERNAL://localhost:19094 #Эта переменная определяет, какой адрес Kafka сообщает клиентам (продюсерам/консьюмерам)
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_KRAFT_CLUSTER_ID=2Q_Rnk50QiGy-tljKONfZQ
     volumes:
