@@ -74,6 +74,8 @@ public class ProducerController {
 
         var result = producer.send(record);
 
+        System.out.printf("Отправлено сообщение: %s", jsonString);
+
         // Закрытие продюсера
         producer.close();
     }
