@@ -30,19 +30,22 @@ public class Main {
 
         // Чтение сообщений в бесконечном цикле
 
-        while (true) {
+        try {
+            while (true) {
 
-            try{
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));  // Получение сообщений
-                for (ConsumerRecord<String, String> record : records) {
-                    System.out.printf("Получено сообщение: key = %s, value = %s, partition = %d, offset = %d%n",
-                            record.key(), record.value(), record.partition(), record.offset());
+                try {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));  // Получение сообщений
+                    for (ConsumerRecord<String, String> record : records) {
+                        System.out.printf("Получено сообщение: key = %s, value = %s, partition = %d, offset = %d%n",
+                                record.key(), record.value(), record.partition(), record.offset());
+                    }
+                } catch (Exception e) {
+                    System.out.print(e);
                 }
             }
-            catch (Exception e)
-            {
-                System.out.print(e);
-            }
+        }
+        finally {
+            consumer.close();
         }
     }
 }

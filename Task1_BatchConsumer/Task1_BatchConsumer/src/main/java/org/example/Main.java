@@ -19,7 +19,7 @@ public class Main {
 
         // Настройка консьюмера
         Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.31.11:19094,192.168.31.11:29094,192.168.31.11:39094");  // Адрес брокера Kafka
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.31.11:19094,192.168.31.11:29094,192.168.31.11:39094");  // Адреса брокеров Kafka
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "consumer-group-1");        // Уникальный идентификатор группы
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
@@ -35,24 +35,27 @@ public class Main {
         // Чтение сообщений в бесконечном цикле
         try {
             while (true) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));  // Получение сообщений
+                try {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));  // Получение сообщений
 
-                for (ConsumerRecord<String, String> record : records) {
-                    if(cache.contains(record))
-                    {
+                    for (ConsumerRecord<String, String> record : records) {
+                        if (cache.contains(record)) {
+                            continue;
+                        }
+
+                        cache.add(record.value());
+                    }
+
+                    if (cache.size() < 10) {
                         continue;
                     }
 
-                    cache.add(record.value());
+                    ConsumeMessage();
+                    consumer.commitSync();
                 }
-
-                if(cache.size() < 10 )
-                {
-                    continue;
+                catch (Exception e) {
+                    System.out.print(e);
                 }
-
-                ConsumeMessage();
-                consumer.commitSync();
             }
         } finally {
             consumer.close();
