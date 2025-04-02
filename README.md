@@ -7,15 +7,17 @@
 5. Проверить доступность brokers на странице с kafka ui.
 6. Проверить то, что кластер обозначен, как online на странице с kafka ui.
 
-Порядок запуска приложения для проверки работоспособности:
+Порядок запуска приложений для проверки работоспособности:
 
 1. Запускаем docker-compose up -d в папке с докер файлом - поднимаются контейнеры кафки;
-2. Запускаем Task1_Producer из под IDE;
+2. Запускаем Task1_Producer из под IDE (при необходимости меняем Id брокеров);
 3. Собираем Task1_Consumer с помощью комадны D:\Repos\kafka-learning\Task1_Consumer\Task1_Consumer> "D:\Programs\maven-mvnd-1.0.2-windows-amd64\bin\mvnd.exe" clean package
    предварительно перейдя в папку D:\Repos\kafka-learning\Task1_Consumer\Task1_Consumer. Пути при этом подменить на свои (в том числе путь к maven);
-4. Аналогично собираем Task1_BatchConsumer;
-5. Запускаем Task1_Consumer так D:\Repos\kafka-learning\Task1_Consumer\Task1_Consumer>"C:\Program Files\Java\jdk-24\bin\java.exe" -jar target/Task1_Consumer-1.0-SNAPSHOT.jar
+   Аналогично п.2 - при необходимости меняем Id брокеров.
+5. Аналогично собираем Task1_BatchConsumer;
+6. Запускаем Task1_Consumer так D:\Repos\kafka-learning\Task1_Consumer\Task1_Consumer>"C:\Program Files\Java\jdk-24\bin\java.exe" -jar target/Task1_Consumer-1.0-SNAPSHOT.jar
    предварительно перейдя в D:\Repos\kafka-learning\Task1_Consumer\Task1_Consumer>
-6. Аналогично запускаем Task1_BatchConsumer;
-7. Продьюсим сообщение запросом через браузер http://localhost:8080/api/produce-message
-8. Смотрим в консоли консьюмеров как идет обработка сообщений.
+7. Аналогично запускаем Task1_BatchConsumer;
+8. Аналогично запускаем вторые экземпляры консьюмеров;
+9. Продьюсим сообщение запросом через браузер http://localhost:8080/api/produce-message
+10. Смотрим в консоли консьюмеров как идет обработка сообщений.
