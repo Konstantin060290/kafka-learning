@@ -17,5 +17,5 @@
 5. Запускаем Task1_Consumer так D:\Repos\kafka-learning\Task1_Consumer\Task1_Consumer>"C:\Program Files\Java\jdk-24\bin\java.exe" -jar target/Task1_Consumer-1.0-SNAPSHOT.jar
    предварительно перейдя в D:\Repos\kafka-learning\Task1_Consumer\Task1_Consumer>
 6. Аналогично запускаем Task1_BatchConsumer;
-7. Продьюсим сообщение через браузер http://localhost:8080/api/produce-message
+7. Продьюсим сообщение запросом через браузер http://localhost:8080/api/produce-message
 8. Смотрим в консоли консьюмеров как идет обработка сообщений.
