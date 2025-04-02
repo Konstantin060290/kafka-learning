@@ -30,9 +30,14 @@ public class ProducerController {
         properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"192.168.31.11:19094,192.168.31.11:29094,192.168.31.11:39094");
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,StringSerializer .class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,StringSerializer .class.getName());
-        properties.put(ProducerConfig.RETRIES_CONFIG, 3); // Число попыток повтора
         properties.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, 5000); // Макс. время ожидания метаданных
         properties.put(ProducerConfig.METADATA_MAX_AGE_CONFIG, "30000"); // Частота обновления метаданных (мс)
+
+        // Важные настройки для At Least Once
+        properties.put(ProducerConfig.ACKS_CONFIG, "all"); // Ждём подтверждения от всех реплик
+        properties.put(ProducerConfig.RETRIES_CONFIG, Integer.MAX_VALUE); // Бесконечные попытки повтора
+        properties.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1); // Запрещаем переупорядочивание
+        properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, "true"); // Идемпотентность
 
         // Создание продюсера
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
