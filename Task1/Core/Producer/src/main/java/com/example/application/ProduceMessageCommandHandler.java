@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import factories.KafkaFactory;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import shortbus.RequestHandler;
 
@@ -19,11 +20,17 @@ import java.util.UUID;
 @Component
 public class ProduceMessageCommandHandler implements RequestHandler<ProduceMessageCommand, Boolean> {
 
+    public KafkaFactory kafkaFactory;
+
+    @Autowired
+    public ProduceMessageCommandHandler(KafkaFactory kafkaFactory) {
+        this.kafkaFactory = kafkaFactory;
+    }
+
     @Override
     public Boolean handle(ProduceMessageCommand request) {
 
-        var factory = new KafkaFactory();
-        var producer = factory.getProducer();
+        var producer = kafkaFactory.getProducer();
 
         var contract = new OrderMessage();
         contract.DateTime = ZonedDateTime.now(ZoneOffset.UTC);

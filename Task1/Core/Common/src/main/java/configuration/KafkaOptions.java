@@ -1,7 +1,16 @@
 package configuration;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
 public class KafkaOptions {
-    public Connection Connection = new Connection();
-    public Producer Producer = new Producer();
-    public Consumer Consumer = new Consumer();
+    @Autowired
+    public Connection connection;
+
+    @Autowired
+    public Producer producer;
+
+    @Autowired
+    public Consumer consumer;
 }

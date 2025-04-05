@@ -1,13 +1,13 @@
 package com.example.controllers;
 
 import com.example.application.ProduceMessageCommand;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import shortbus.Mediator;
-import org.springframework.beans.factory.annotation.Autowired;
+import shortbus.Response;
 
 /**
  *
@@ -16,17 +16,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RestController
 public class MessagesController {
 
-    //@AutoWired
+    @Autowired
     Mediator mediator;
+    @RequestMapping(value = "/api/produce", method = RequestMethod.POST)
+    public HttpStatus produceMessage() throws Exception {
 
-    @RequestMapping(value = "/api/{name}/produce", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.OK)
-    public String produceMessage() {
+        ProduceMessageCommand command = new ProduceMessageCommand();
 
-        var command = new ProduceMessageCommand();
+        Response <Boolean> result = mediator.request(command);
 
-        //var result =
-        return "";
+        if(result.data.booleanValue() == false)
+        {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
 
+        return HttpStatus.OK;
     }
 }
