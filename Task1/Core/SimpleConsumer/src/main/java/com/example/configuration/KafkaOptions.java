@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 public class KafkaOptions {
     @Autowired
     public Connection connection;
-
     @Autowired
-    public Producer producer;
+    public Consumer consumer;
 }

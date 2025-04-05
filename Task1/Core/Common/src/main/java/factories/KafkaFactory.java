@@ -1,11 +1,14 @@
 package factories;
 
 import Configuration.KafkaOptions;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
+import java.util.Collections;
 import java.util.Properties;
 
 public class KafkaFactory {
@@ -18,7 +21,7 @@ public class KafkaFactory {
     public KafkaProducer<String, String> getProducer()
     {
         Properties properties = new Properties();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, _kafkaOptions.connection.bootstrapServers);
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, _kafkaOptions.connection.bootstrapServers); // Адреса брокеров Kafka
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         properties.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, _kafkaOptions.producer.maxBlocksMs.toString()); // Макс. время ожидания метаданных
@@ -35,13 +38,21 @@ public class KafkaFactory {
         return producer;
     }
 
-    public KafkaConsumer<String, String> getConsumer()
+    public KafkaConsumer<String, String> getConsumer(String topicName)
     {
-        var kafkaOptions = new KafkaOptions();
+        Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, _kafkaOptions.connection.bootstrapServers);  // Адреса брокеров Kafka
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, _kafkaOptions.consumer.groupId);        // Уникальный идентификатор группы
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, _kafkaOptions.consumer.autoOffsetReset);        // Начало чтения с самого начала
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, _kafkaOptions.consumer.enableAutoCommit);           // Автоматический коммит смещений
+        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, _kafkaOptions.consumer.sessionTimeOut.toString());           // Время ожидания активности от консьюмера
 
-        Properties properties = new Properties();
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 
-        var consumer = new KafkaConsumer<String, String>(properties);
+        // Подписка на топик
+        consumer.subscribe(Collections.singletonList(topicName));
 
         return consumer;
     }

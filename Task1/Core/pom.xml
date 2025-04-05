@@ -9,9 +9,9 @@
   <url>http://maven.apache.org</url>
   <modules>
     <module>Producer</module>
-    <module>SimpleConsumer</module>
     <module>BatchConsumer</module>
     <module>Common</module>
+    <module>SimpleConsumer</module>
   </modules>
 
   <dependencies>
