@@ -1,0 +1,22 @@
+package configuration;
+
+import org.springframework.beans.factory.annotation.Value;
+
+public class Producer {
+    @Value("${kafka.producer.serialize.key}")
+    public String keySerializer;
+    @Value("${kafka.producer.serialize.value}")
+    public String valueSerializer;
+    @Value("${kafka.producer.max-blocks-ms}")
+    public Integer maxBlocksMs;
+    @Value("${kafka.producer.metadata-max-age-config}")
+    public Integer metaDataMaxAge;
+    @Value("${kafka.producer.acks}")
+    public String acks;
+    @Value("${kafka.producer.retries}")
+    public Integer retries;
+    @Value("${kafka.producer.max-in-flight-requests-per-connection}")
+    public Integer maxInFlightRequestsPerConnection;
+    @Value("${kafka.producer.enable-idempotence}")
+    public Boolean enableIdempotence;
+}
