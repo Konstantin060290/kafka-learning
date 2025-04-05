@@ -1,14 +1,10 @@
-package configuration;
+package com.example.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class Producer {
-    @Value("${kafka.producer.serialize.key}")
-    public String keySerializer;
-    @Value("${kafka.producer.serialize.value}")
-    public String valueSerializer;
     @Value("${kafka.producer.max-blocks-ms}")
     public Integer maxBlocksMs;
     @Value("${kafka.producer.metadata-max-age-config}")

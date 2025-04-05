@@ -1,5 +1,6 @@
 package com.example.application;
 
+import com.example.builders.ConfigBuilder;
 import com.example.contracts.Good;
 import com.example.contracts.Order;
 import com.example.contracts.OrderMessage;
@@ -8,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import factories.KafkaFactory;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import shortbus.RequestHandler;
 
@@ -20,15 +20,19 @@ import java.util.UUID;
 @Component
 public class ProduceMessageCommandHandler implements RequestHandler<ProduceMessageCommand, Boolean> {
 
-    public KafkaFactory kafkaFactory;
+    public com.example.configuration.KafkaOptions kafkaOptions;
+    private final ConfigBuilder configBuilder;
 
-    @Autowired
-    public ProduceMessageCommandHandler(KafkaFactory kafkaFactory) {
-        this.kafkaFactory = kafkaFactory;
+    ProduceMessageCommandHandler(com.example.configuration.KafkaOptions kafkaOptions, ConfigBuilder configBuilder)
+    {
+        this.kafkaOptions = kafkaOptions;
+        this.configBuilder = configBuilder;
     }
 
     @Override
     public Boolean handle(ProduceMessageCommand request) {
+
+        var kafkaFactory = new KafkaFactory(configBuilder.GetOptions(kafkaOptions));
 
         var producer = kafkaFactory.getProducer();
 
