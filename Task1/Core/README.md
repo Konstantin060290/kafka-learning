@@ -1,3 +1,12 @@
+Порядок запуска проекта Task1:
+
+1. Разворачиваем кластер kafka с помощью команды 'sudo EXTERNAL_IP=localhost docker compose up -d'.
+Если kafka будет развернута на сервере, то вместо localhost указываем ip адрес сервера.
+2. Проверяем логи всех нод kafka с помощью docker logs <container_name>, не должно быть ошибок
+3. Проверяем доступность UI и брокеров: http://localhost:8080/ui/clusters/kraft/brokers
+4. Создаем топик с помощью команды указанной в файле ./Infrastructure/topic.txt
+5. 
+
 Для развертывания кластера kafka требуется:
 
 1. Получить KAFKA_KRAFT_CLUSTER_ID. Для этого запустить команду docker run --rm apache/kafka:3.7.0 kafka-storage.sh random-uuid

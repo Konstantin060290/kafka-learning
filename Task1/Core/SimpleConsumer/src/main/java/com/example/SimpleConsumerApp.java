@@ -8,12 +8,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import shortbus.Mediator;
 
 @SpringBootApplication
-public class App implements CommandLineRunner
+public class SimpleConsumerApp implements CommandLineRunner
 {
     @Autowired
     Mediator mediator;
 
-    public App(Mediator mediator) {
+    public SimpleConsumerApp(Mediator mediator) {
        this.mediator = mediator;
     }
 
@@ -27,6 +27,6 @@ public class App implements CommandLineRunner
 
     public static void main( String[] args )
     {
-        SpringApplication.run(App.class, args);
+        SpringApplication.run(SimpleConsumerApp.class, args);
     }
 }
