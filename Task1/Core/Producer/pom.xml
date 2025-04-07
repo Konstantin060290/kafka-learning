@@ -11,14 +11,6 @@
     <artifactId>Producer</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <java.version>10</java.version>
-        <maven.compiler.source>10</maven.compiler.source>
-        <maven.compiler.target>10</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
