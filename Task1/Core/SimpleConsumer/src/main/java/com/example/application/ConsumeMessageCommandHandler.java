@@ -1,7 +1,7 @@
 package com.example.application;
 
 import com.example.builders.ConfigBuilder;
-import factories.KafkaFactory;
+import factories.KafkaConsumerFactory;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -24,7 +24,7 @@ public class ConsumeMessageCommandHandler implements RequestHandler<ConsumeMessa
     @Override
     public Void handle(ConsumeMessageCommand request) {
 
-        KafkaFactory kafkaFactory = new KafkaFactory(configBuilder.GetOptions(kafkaOptions));
+        KafkaConsumerFactory kafkaFactory = new KafkaConsumerFactory(configBuilder.GetOptions(kafkaOptions));
 
         KafkaConsumer<String, String> consumer = kafkaFactory.getConsumer(kafkaOptions.consumer.TopicName);
 

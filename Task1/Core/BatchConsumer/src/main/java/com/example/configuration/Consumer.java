@@ -16,4 +16,6 @@ public class Consumer {
     public Integer sessionTimeOut;
     @Value("${kafka.consumer.topic-name}")
     public String TopicName;
+    @Value("${kafka.consumer.min-batch-size}")
+    public Integer MinBatchSize;
 }

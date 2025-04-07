@@ -7,7 +7,7 @@ import com.example.contracts.OrderMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import factories.KafkaFactory;
+import factories.KafkaProducerFactory;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.stereotype.Component;
 import shortbus.RequestHandler;
@@ -33,7 +33,7 @@ public class ProduceMessageCommandHandler implements RequestHandler<ProduceMessa
     public Boolean handle(ProduceMessageCommand request) {
 
         try{
-            var kafkaFactory = new KafkaFactory(configBuilder.GetOptions(kafkaOptions));
+            var kafkaFactory = new KafkaProducerFactory(configBuilder.GetOptions(kafkaOptions));
 
             var producer = kafkaFactory.getProducer();
 

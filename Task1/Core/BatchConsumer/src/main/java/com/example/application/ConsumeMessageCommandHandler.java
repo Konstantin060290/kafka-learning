@@ -1,7 +1,7 @@
 package com.example.application;
 
 import com.example.builders.ConfigBuilder;
-import factories.KafkaFactory;
+import factories.KafkaConsumerFactory;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -9,16 +9,15 @@ import org.springframework.stereotype.Component;
 import shortbus.RequestHandler;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 
 @Component
 public class ConsumeMessageCommandHandler implements RequestHandler<ConsumeMessageCommand, Void> {
 
     public com.example.configuration.KafkaOptions kafkaOptions;
     private final ConfigBuilder configBuilder;
-    public int batchSize = 10;
-    public static ArrayList<String> cache = new ArrayList<>();
+    public static HashSet<String> cache = new HashSet();
     ConsumeMessageCommandHandler(com.example.configuration.KafkaOptions kafkaOptions, ConfigBuilder configBuilder)
     {
         this.kafkaOptions = kafkaOptions;
@@ -27,7 +26,7 @@ public class ConsumeMessageCommandHandler implements RequestHandler<ConsumeMessa
     @Override
     public Void handle(ConsumeMessageCommand request) {
 
-        KafkaFactory kafkaFactory = new KafkaFactory(configBuilder.GetOptions(kafkaOptions));
+        KafkaConsumerFactory kafkaFactory = new KafkaConsumerFactory(configBuilder.GetOptions(kafkaOptions));
 
         KafkaConsumer<String, String> consumer = kafkaFactory.getConsumer(kafkaOptions.consumer.TopicName);
 
@@ -41,14 +40,10 @@ public class ConsumeMessageCommandHandler implements RequestHandler<ConsumeMessa
                     ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));  // Получение сообщений
 
                     for (ConsumerRecord<String, String> record : records) {
-                        if (cache.contains(record)) {
-                            continue;
-                        }
-
                         cache.add(record.value());
                     }
 
-                    if (cache.size() < batchSize) {
+                    if (cache.size() < kafkaOptions.consumer.MinBatchSize) {
                         continue;
                     }
 
