@@ -11,4 +11,8 @@ public class Stream {
     public String prohibitedWordsTopicName;
     @Value("${kafka.stream.prohibited-words-store-name}")
     public String prohibitedWordsStoreName;
+    @Value("${kafka.stream.blocked-users-topic-name}")
+    public String blockedUsersTopicName;
+    @Value("${kafka.stream.blocked-users-store-name}")
+    public String blockedUsersStoreName;
 }

@@ -1,6 +1,8 @@
 package com.example;
 
 import com.example.configuration.KafkaOptions;
+import com.example.configuration.KafkaStreamsConfig;
+import jakarta.annotation.PostConstruct;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
@@ -18,17 +20,17 @@ import java.util.Properties;
 @Component
 public class ProhibitedWordsStoreFiller {
     @Autowired
+    KafkaStreamsConfig streamProperties;
+    @Autowired
     KafkaOptions kafkaOptions;
 
+    @PostConstruct
     public void FillStore() {
         try {
             // Конфигурация Kafka Streams
             Properties properties = new Properties();
-            properties.put(StreamsConfig.APPLICATION_ID_CONFIG, kafkaOptions.stream.applicationId);
-            properties.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaOptions.connection.bootstrapServers);
-            properties.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-            properties.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
-
+            properties.putAll(streamProperties.getStreamsProperties());
+            properties.put(StreamsConfig.APPLICATION_ID_CONFIG, kafkaOptions.stream.applicationId + "-prohibited-words");
 
             // Создаём топологию
             StreamsBuilder builder = new StreamsBuilder();
