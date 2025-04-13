@@ -15,4 +15,6 @@ public class Stream {
     public String blockedUsersTopicName;
     @Value("${kafka.stream.blocked-users-store-name}")
     public String blockedUsersStoreName;
+    @Value("${kafka.stream.messages-topic-name}")
+    public String messagesTopicName;
 }
