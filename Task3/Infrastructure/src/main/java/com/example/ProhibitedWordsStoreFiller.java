@@ -10,35 +10,22 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.state.Stores;
 import org.apache.kafka.streams.StreamsBuilder;
-import java.util.Properties;
 
 @Component
 public class ProhibitedWordsStoreFiller {
     @Autowired
-    KafkaStreamsConfig streamProperties;
+    KafkaStreamsConfig streamsConfig;
     @Autowired
     KafkaOptions kafkaOptions;
 
     @PostConstruct
     public void FillStore() {
         try {
-            // Конфигурация Kafka Streams
-            Properties properties = new Properties();
-            properties.putAll(streamProperties.getStreamsProperties());
-            properties.put(StreamsConfig.APPLICATION_ID_CONFIG, kafkaOptions.stream.applicationId + "-prohibited-words");
-
-            // Создаём топологию
-            StreamsBuilder builder = new StreamsBuilder();
-
-            //Инициализируем state store
-            builder.addStateStore(Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore(kafkaOptions.stream.prohibitedWordsStoreName), Serdes.String(), // Key serde
-                    Serdes.String()    // Value serde
-            ));
+            // Получаем топологию
+            StreamsBuilder builder = streamsConfig.streamsBuilderFactoryBean().getObject();
 
             // Создаём KStream из топика с входными данными
             KStream<String, String> stream = builder.stream(kafkaOptions.stream.prohibitedWordsTopicName, Consumed.with(Serdes.String(), Serdes.String()));
@@ -64,8 +51,12 @@ public class ProhibitedWordsStoreFiller {
                 }
             }, kafkaOptions.stream.prohibitedWordsStoreName);
 
-            // Старт потока
-            KafkaStreams streams = new KafkaStreams(builder.build(), properties);
+            // 4. Строим топологию и запускаем
+            KafkaStreams streams = new KafkaStreams(
+                    builder.build(),
+                    streamsConfig.getStreamsProperties()
+            );
+
             streams.start();
 
         } catch (Exception e) {

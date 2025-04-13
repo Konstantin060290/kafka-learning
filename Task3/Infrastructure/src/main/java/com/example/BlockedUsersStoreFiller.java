@@ -6,45 +6,29 @@ import jakarta.annotation.PostConstruct;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.Stores;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.Properties;
 
 @Component
 public class BlockedUsersStoreFiller {
     @Autowired
-    KafkaStreamsConfig streamProperties;
+    KafkaStreamsConfig streamsConfig;
     @Autowired
     KafkaOptions kafkaOptions;
 
     @PostConstruct
     public void FillStore() {
         try {
-            // Конфигурация Kafka Streams
-            Properties properties = new Properties();
-            properties.putAll(streamProperties.getStreamsProperties());
-            properties.put(StreamsConfig.APPLICATION_ID_CONFIG, kafkaOptions.stream.applicationId + "-blocked-users");
-
-            // Создаём топологию
-            StreamsBuilder builder = new StreamsBuilder();
-
-            //Инициализируем state store
-            builder.addStateStore(Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore(kafkaOptions.stream.blockedUsersStoreName),
-                    Serdes.String(), // Key serde
-                    Serdes.String()    // Value serde
-            ));
+            // Получаем топологию
+            StreamsBuilder builder = streamsConfig.streamsBuilderFactoryBean().getObject();
 
             // Создаём KStream из топика с входными данными
             KStream<String, String> stream = builder.stream(kafkaOptions.stream.blockedUsersTopicName, Consumed.with(Serdes.String(), Serdes.String()));
-
 
             // Обработка сообщений с доступом к State Store
             stream.process(() -> new Processor<>() {
@@ -67,8 +51,12 @@ public class BlockedUsersStoreFiller {
                 }
             }, kafkaOptions.stream.blockedUsersStoreName);
 
-            // Старт потока
-            KafkaStreams streams = new KafkaStreams(builder.build(), properties);
+            // 4. Строим топологию и запускаем
+            KafkaStreams streams = new KafkaStreams(
+                    builder.build(),
+                    streamsConfig.getStreamsProperties()
+            );
+
             streams.start();
 
         } catch (Exception e) {
