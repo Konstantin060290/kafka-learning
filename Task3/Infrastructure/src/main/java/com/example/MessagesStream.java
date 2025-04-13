@@ -1,10 +1,10 @@
 package com.example;
 
 import com.example.configuration.KafkaOptions;
-import com.example.configuration.KafkaStreamsConfig;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
@@ -13,6 +13,7 @@ import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueIterator;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -20,7 +21,9 @@ import java.util.*;
 @Component
 public class MessagesStream {
     @Autowired
-    KafkaStreamsConfig streamsConfig;
+    private StreamsBuilderFactoryBean streamsBuilderFactoryBean;
+    @Autowired
+    private Properties getStreamsProperties;
     @Autowired
     KafkaOptions kafkaOptions;
     @Autowired
@@ -29,7 +32,7 @@ public class MessagesStream {
     @PostConstruct
     public void startStream() throws Exception {
         // Получаем топологию
-        StreamsBuilder builder = streamsConfig.streamsBuilderFactoryBean().getObject();
+        StreamsBuilder builder = streamsBuilderFactoryBean.getObject();
 
         // Создаем поток обработки
         builder.stream(kafkaOptions.stream.messagesTopicName, Consumed.with(Serdes.String(), Serdes.String()))
@@ -37,6 +40,14 @@ public class MessagesStream {
                         kafkaOptions.stream.blockedUsersStoreName,
                         kafkaOptions.stream.prohibitedWordsStoreName)
                 .foreach(this::processMessage);
+
+        // 4. Строим топологию и запускаем
+        KafkaStreams streams = new KafkaStreams(
+                builder.build(),
+                getStreamsProperties
+        );
+
+        streams.start();
     }
 
     private void processMessage(String key, String value) {

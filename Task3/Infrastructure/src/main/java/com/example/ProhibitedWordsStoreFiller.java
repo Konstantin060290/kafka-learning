@@ -1,15 +1,14 @@
 package com.example;
 
 import com.example.configuration.KafkaOptions;
-import com.example.configuration.KafkaStreamsConfig;
 import jakarta.annotation.PostConstruct;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
 import org.apache.kafka.streams.state.KeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Component;
-import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -17,7 +16,7 @@ import org.apache.kafka.streams.StreamsBuilder;
 @Component
 public class ProhibitedWordsStoreFiller {
     @Autowired
-    KafkaStreamsConfig streamsConfig;
+    private StreamsBuilderFactoryBean streamsBuilderFactoryBean;
     @Autowired
     KafkaOptions kafkaOptions;
 
@@ -25,7 +24,7 @@ public class ProhibitedWordsStoreFiller {
     public void FillStore() {
         try {
             // Получаем топологию
-            StreamsBuilder builder = streamsConfig.streamsBuilderFactoryBean().getObject();
+            StreamsBuilder builder = streamsBuilderFactoryBean.getObject();
 
             // Создаём KStream из топика с входными данными
             KStream<String, String> stream = builder.stream(kafkaOptions.stream.prohibitedWordsTopicName, Consumed.with(Serdes.String(), Serdes.String()));
@@ -50,14 +49,6 @@ public class ProhibitedWordsStoreFiller {
                 public void close() {
                 }
             }, kafkaOptions.stream.prohibitedWordsStoreName);
-
-            // 4. Строим топологию и запускаем
-            KafkaStreams streams = new KafkaStreams(
-                    builder.build(),
-                    streamsConfig.getStreamsProperties()
-            );
-
-            streams.start();
 
         } catch (Exception e) {
             System.err.println("Ошибка при запуске Kafka Streams приложения: " + e.getMessage());
