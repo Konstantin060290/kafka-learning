@@ -4,7 +4,6 @@ import com.example.configuration.KafkaOptions;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Consumed;
@@ -23,8 +22,6 @@ public class MessagesStream {
     @Autowired
     private StreamsBuilderFactoryBean streamsBuilderFactoryBean;
     @Autowired
-    private Properties getStreamsProperties;
-    @Autowired
     KafkaOptions kafkaOptions;
     @Autowired
     BadWordsReplacer badWordsReplacer;
@@ -39,19 +36,17 @@ public class MessagesStream {
                 .transformValues(() -> new MessageReaderTransformer(),
                         kafkaOptions.stream.blockedUsersStoreName,
                         kafkaOptions.stream.prohibitedWordsStoreName)
-                .foreach(this::processMessage);
+                .to(kafkaOptions.stream.filteredMessagesTopicName); // Автоматическая отправка в топик
 
-        // 4. Строим топологию и запускаем
-        KafkaStreams streams = new KafkaStreams(
-                builder.build(),
-                getStreamsProperties
-        );
-
-        streams.start();
+        // Дополнительная обработка
+        builder.stream(kafkaOptions.stream.messagesTopicName)
+                .foreach((key, value) -> {
+                    additionalProcessMessage((String)key, (String)value);
+                });
     }
 
-    private void processMessage(String key, String value) {
-        // Обработка очищенных сообщений
+    private void additionalProcessMessage(String key, String value) {
+        // Запишем в консоль оригинальное сообщение
         System.out.println("Received message - Key: " + key + ", Value: " + value);
     }
 
