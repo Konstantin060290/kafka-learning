@@ -3,6 +3,6 @@ package com.example;
 import org.apache.kafka.common.Uuid;
 
 public class ProhibitedWord {
-    Uuid Id;
-    String Word;
+    public String Id;
+    public String Word;
 }

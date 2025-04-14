@@ -69,6 +69,9 @@ public class MessagesStream {
 
         @Override
         public String transform(String key, String value) {
+
+
+
             // Проверяем, не заблокирован ли пользователь
             if (blockedUsersStore.get(key) != null) {
                 return null; // Пропускаем сообщение

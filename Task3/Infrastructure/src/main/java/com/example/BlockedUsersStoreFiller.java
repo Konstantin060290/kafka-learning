@@ -42,7 +42,7 @@ public class BlockedUsersStoreFiller {
                 public void process(String key, String value) {
                     // Сохраняем сообщение в State Store
                     store.put(key, value);
-                    System.out.printf("В store добавлено блокировка пользователя: %s", key);
+                    System.out.printf("В store добавлена блокировка пользователя: %s\n", value);
                 }
 
                 @Override

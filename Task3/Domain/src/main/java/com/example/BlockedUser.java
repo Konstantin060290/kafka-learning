@@ -1,6 +1,6 @@
 package com.example;
 
 public class BlockedUser {
-    User User;
-    User Blocked;
+    public User User;
+    public User Blocked;
 }

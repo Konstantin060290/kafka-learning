@@ -42,7 +42,7 @@ public class ProhibitedWordsStoreFiller {
                 public void process(String key, String value) {
                     // Сохраняем сообщение в State Store
                     store.put(key, value);
-                    System.out.printf("В store добавлено запрещенное слово: %s", key);
+                    System.out.printf("В store добавлено запрещенное слово: %s\n", value);
                 }
 
                 @Override
