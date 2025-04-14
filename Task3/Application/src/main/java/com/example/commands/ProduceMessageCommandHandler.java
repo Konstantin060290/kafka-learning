@@ -1,7 +1,6 @@
 package com.example.commands;
 
 import com.example.Message;
-import com.example.ProhibitedWord;
 import com.example.configuration.KafkaOptions;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,9 +47,6 @@ public class ProduceMessageCommandHandler implements RequestHandler<ProduceMessa
             producer.send(record);
 
             System.out.printf("Отправлено сообщение: %s", jsonString);
-
-            // Закрытие продюсера
-            producer.close();
 
             return true;
         } catch (Exception e) {

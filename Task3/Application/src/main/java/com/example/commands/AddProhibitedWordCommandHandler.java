@@ -46,9 +46,6 @@ public class AddProhibitedWordCommandHandler implements RequestHandler<AddProhib
 
             System.out.printf("Отправлено сообщение: %s", jsonString);
 
-            // Закрытие продюсера
-            producer.close();
-
             return true;
         } catch (Exception e) {
             System.out.printf(e.toString());

@@ -6,6 +6,7 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Properties;
@@ -15,6 +16,7 @@ public class KafkaFactory {
     @Autowired
     KafkaOptions _kafkaOptions;
     @Bean
+    @Scope("prototype")
     public KafkaProducer<String, String> getProducer()
     {
         var properties = new Properties();

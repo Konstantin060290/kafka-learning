@@ -1,6 +1,9 @@
 package com.example;
 
 import com.example.configuration.KafkaOptions;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.apache.kafka.common.serialization.Serdes;
@@ -36,6 +39,7 @@ public class MessagesStream {
                 .transformValues(() -> new MessageReaderTransformer(),
                         kafkaOptions.stream.blockedUsersStoreName,
                         kafkaOptions.stream.prohibitedWordsStoreName)
+                .filter((key, value) -> value != null || value.length() > 0)
                 .to(kafkaOptions.stream.filteredMessagesTopicName); // Автоматическая отправка в топик
 
         // Дополнительная обработка
@@ -70,30 +74,95 @@ public class MessagesStream {
         @Override
         public String transform(String key, String value) {
 
+            // Десериализуем входящее сообщение
+            Message message = deserializeMessage(value);
+            if (message == null) {
+                return null;
+            }
 
+            // Проверяем, не заблокирован ли отправитель
+            try (KeyValueIterator<String, String> iterator = blockedUsersStore.all()) {
+                while (iterator.hasNext()) {
+                    KeyValue<String, String> entry = iterator.next();
+                    BlockedUser blockedUser = deserializeBlockedUser(entry.value);
 
-            // Проверяем, не заблокирован ли пользователь
-            if (blockedUsersStore.get(key) != null) {
-                return null; // Пропускаем сообщение
+                    if (blockedUser == null) {
+                        return null;
+                    }
+
+                    // Проверяем, совпадает ли отправитель с заблокированным пользователем
+                    if (blockedUser.Blocked.Name.equals(message.from)) {
+                        System.out.println("Message from blocked user: " + message.from);
+                        return null; // Пропускаем сообщение
+                    }
+                }
             }
 
             List<String> allProhibitedWords = new ArrayList<>();
             try (KeyValueIterator<String, String> iterator = prohibitedWordsStore.all()) {
                 while (iterator.hasNext()) {
                     KeyValue<String, String> entry = iterator.next();
-                    allProhibitedWords.add(entry.value);
-                    System.out.println("Found prohibited word: " + entry.value); // Добавьте лог для отладки
+
+                    var word = deserializeWord(entry.value);
+
+                    if (word == null) {
+                        return null;
+                    }
+
+                    allProhibitedWords.add(word.Word);
+                    System.out.println("Found prohibited word: " + entry.value);
                 }
             }
 
-            var transformedMessage = badWordsReplacer.Replace(value, allProhibitedWords);
+            var transformedBody = badWordsReplacer.Replace(message.body, allProhibitedWords);
+            message.body = transformedBody;
 
-            return transformedMessage;
+
+            ObjectMapper mapper = new ObjectMapper()
+                    .registerModule(new JavaTimeModule());
+
+            String jsonString = null;
+            try {
+                jsonString = mapper.writeValueAsString(message);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
+            return jsonString;
         }
 
         @Override
         public void close() {
 
+        }
+
+        private Message deserializeMessage(String value) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.readValue(value, Message.class);
+            } catch (Exception e) {
+                System.err.println("Failed to deserialize message: " + e.getMessage());
+                return null;
+            }
+        }
+        private BlockedUser deserializeBlockedUser(String value) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.readValue(value, BlockedUser.class);
+            } catch (Exception e) {
+                System.err.println("Failed to deserialize message: " + e.getMessage());
+                return null;
+            }
+        }
+
+        private ProhibitedWord deserializeWord(String value) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                return mapper.readValue(value, ProhibitedWord.class);
+            } catch (Exception e) {
+                System.err.println("Failed to deserialize message: " + e.getMessage());
+                return null;
+            }
         }
     }
 }
