@@ -39,7 +39,7 @@ public class MessagesStream {
                 .transformValues(() -> new MessageReaderTransformer(),
                         kafkaOptions.stream.blockedUsersStoreName,
                         kafkaOptions.stream.prohibitedWordsStoreName)
-                .filter((key, value) -> value != null || value.length() > 0)
+                .filter((key, value) -> value.length() > 0)
                 .to(kafkaOptions.stream.filteredMessagesTopicName); // Автоматическая отправка в топик
 
         // Дополнительная обработка
@@ -59,16 +59,12 @@ public class MessagesStream {
     }
 
     // Трансформер с доступом к StateStore
-    private class MessageReaderTransformer implements ValueTransformerWithKey<String, String, String> {
-        private KeyValueStore<String, String> blockedUsersStore;
-        private KeyValueStore<String, String> prohibitedWordsStore;
+    public class MessageReaderTransformer implements ValueTransformerWithKey<String, String, String> {
         private ProcessorContext context;
 
         @Override
         public void init(ProcessorContext context) {
             this.context = context;
-            this.blockedUsersStore = context.getStateStore(kafkaOptions.stream.blockedUsersStoreName);
-            this.prohibitedWordsStore = context.getStateStore(kafkaOptions.stream.prohibitedWordsStoreName);
         }
 
         @Override
@@ -77,23 +73,27 @@ public class MessagesStream {
             // Десериализуем входящее сообщение
             Message message = deserializeMessage(value);
             if (message == null) {
-                return null;
+                return "";
             }
+
+            KeyValueStore<String, String> blockedUsersStore = context.getStateStore(kafkaOptions.stream.blockedUsersStoreName);
+            KeyValueStore<String, String> prohibitedWordsStore = context.getStateStore(kafkaOptions.stream.prohibitedWordsStoreName);
 
             // Проверяем, не заблокирован ли отправитель
             try (KeyValueIterator<String, String> iterator = blockedUsersStore.all()) {
+
                 while (iterator.hasNext()) {
-                    KeyValue<String, String> entry = iterator.next();
-                    BlockedUser blockedUser = deserializeBlockedUser(entry.value);
+                    KeyValue<String, String> user = iterator.next();
+                    BlockedUser blockedUser = deserializeBlockedUser(user.value);
 
                     if (blockedUser == null) {
-                        return null;
+                        return "";
                     }
 
                     // Проверяем, совпадает ли отправитель с заблокированным пользователем
                     if (blockedUser.Blocked.Name.equals(message.from)) {
                         System.out.println("Message from blocked user: " + message.from);
-                        return null; // Пропускаем сообщение
+                        return "";
                     }
                 }
             }
@@ -106,7 +106,7 @@ public class MessagesStream {
                     var word = deserializeWord(entry.value);
 
                     if (word == null) {
-                        return null;
+                        return "";
                     }
 
                     allProhibitedWords.add(word.Word);
@@ -117,7 +117,6 @@ public class MessagesStream {
             var transformedBody = badWordsReplacer.Replace(message.body, allProhibitedWords);
             message.body = transformedBody;
 
-
             ObjectMapper mapper = new ObjectMapper()
                     .registerModule(new JavaTimeModule());
 
@@ -125,7 +124,7 @@ public class MessagesStream {
             try {
                 jsonString = mapper.writeValueAsString(message);
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                return "";
             }
 
             return jsonString;
