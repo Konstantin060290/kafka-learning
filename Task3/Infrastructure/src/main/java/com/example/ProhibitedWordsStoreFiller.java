@@ -5,7 +5,6 @@ import jakarta.annotation.PostConstruct;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
-import org.apache.kafka.streams.state.KeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Component;
@@ -19,6 +18,8 @@ public class ProhibitedWordsStoreFiller {
     private StreamsBuilderFactoryBean streamsBuilderFactoryBean;
     @Autowired
     KafkaOptions kafkaOptions;
+    @Autowired
+    StoreManager storeManager;
 
     @PostConstruct
     public void FillStore() {
@@ -32,16 +33,16 @@ public class ProhibitedWordsStoreFiller {
 
             // Обработка сообщений с доступом к State Store
             stream.process(() -> new Processor<>() {
-                private KeyValueStore<String, String> store;
                 @Override
                 public void init(ProcessorContext context) {
-                    this.store = context.getStateStore(kafkaOptions.stream.prohibitedWordsStoreName);
+                    storeManager.initProhibitedWordsStore(context);
                 }
 
                 @Override
                 public void process(String key, String value) {
                     // Сохраняем сообщение в State Store
-                    store.put(key, value);
+                    storeManager.getProhibitedWordsStore().ifPresent(store ->
+                            store.put(key, value));
                     System.out.printf("В store добавлено запрещенное слово: %s\n", value);
                 }
 

@@ -29,6 +29,9 @@ public class MessagesStream {
     @Autowired
     BadWordsReplacer badWordsReplacer;
 
+    @Autowired
+    StoreManager storeManager;
+
     @PostConstruct
     public void startStream() throws Exception {
         // Получаем топологию
@@ -45,7 +48,7 @@ public class MessagesStream {
         // Дополнительная обработка
         builder.stream(kafkaOptions.stream.messagesTopicName)
                 .foreach((key, value) -> {
-                    additionalProcessMessage((String)key, (String)value);
+                    additionalProcessMessage((String) key, (String) value);
                 });
     }
 
@@ -60,11 +63,10 @@ public class MessagesStream {
 
     // Трансформер с доступом к StateStore
     public class MessageReaderTransformer implements ValueTransformerWithKey<String, String, String> {
-        private ProcessorContext context;
 
         @Override
         public void init(ProcessorContext context) {
-            this.context = context;
+            storeManager.initBlockedUsersStore(context);
         }
 
         @Override
@@ -76,43 +78,48 @@ public class MessagesStream {
                 return "";
             }
 
-            KeyValueStore<String, String> blockedUsersStore = context.getStateStore(kafkaOptions.stream.blockedUsersStoreName);
-            KeyValueStore<String, String> prohibitedWordsStore = context.getStateStore(kafkaOptions.stream.prohibitedWordsStoreName);
+            var blockedUsersStore = storeManager.getBlockedUsersStore();
+            var prohibitedWordsStore = storeManager.getProhibitedWordsStore();
 
             // Проверяем, не заблокирован ли отправитель
-            try (KeyValueIterator<String, String> iterator = blockedUsersStore.all()) {
+            blockedUsersStore.ifPresent(store -> {
+                try (KeyValueIterator<String, String> iterator = store.all()) {
 
-                while (iterator.hasNext()) {
-                    KeyValue<String, String> user = iterator.next();
-                    BlockedUser blockedUser = deserializeBlockedUser(user.value);
+                    while (iterator.hasNext()) {
+                        KeyValue<String, String> user = iterator.next();
+                        BlockedUser blockedUser = deserializeBlockedUser(user.value);
 
-                    if (blockedUser == null) {
-                        return "";
-                    }
+                        if (blockedUser == null) {
+                            throw new IllegalStateException("Failed deserialize user");
+                        }
 
-                    // Проверяем, совпадает ли отправитель с заблокированным пользователем
-                    if (blockedUser.Blocked.Name.equals(message.from)) {
-                        System.out.println("Message from blocked user: " + message.from);
-                        return "";
+                        // Проверяем, совпадает ли отправитель с заблокированным пользователем
+                        if (blockedUser.Blocked.Name.equals(message.from)) {
+                            System.out.println("Message from blocked user: " + message.from);
+                            throw new IllegalStateException("Message from blocked user: " + message.from);
+                        }
                     }
                 }
-            }
+            });
 
             List<String> allProhibitedWords = new ArrayList<>();
-            try (KeyValueIterator<String, String> iterator = prohibitedWordsStore.all()) {
-                while (iterator.hasNext()) {
-                    KeyValue<String, String> entry = iterator.next();
 
-                    var word = deserializeWord(entry.value);
+            prohibitedWordsStore.ifPresent(store -> {
+                try (KeyValueIterator<String, String> iterator = store.all()) {
+                    while (iterator.hasNext()) {
+                        KeyValue<String, String> entry = iterator.next();
 
-                    if (word == null) {
-                        return "";
+                        var word = deserializeWord(entry.value);
+
+                        if (word == null) {
+                            throw new IllegalStateException("Failed deserialize word");
+                        }
+
+                        allProhibitedWords.add(word.Word);
+                        System.out.println("Found prohibited word: " + entry.value);
                     }
-
-                    allProhibitedWords.add(word.Word);
-                    System.out.println("Found prohibited word: " + entry.value);
                 }
-            }
+            });
 
             var transformedBody = badWordsReplacer.Replace(message.body, allProhibitedWords);
             message.body = transformedBody;
@@ -128,6 +135,7 @@ public class MessagesStream {
             }
 
             return jsonString;
+
         }
 
         @Override
@@ -144,6 +152,7 @@ public class MessagesStream {
                 return null;
             }
         }
+
         private BlockedUser deserializeBlockedUser(String value) {
             try {
                 ObjectMapper mapper = new ObjectMapper();

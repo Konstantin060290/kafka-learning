@@ -8,7 +8,6 @@ import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorContext;
-import org.apache.kafka.streams.state.KeyValueStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.config.StreamsBuilderFactoryBean;
 import org.springframework.stereotype.Component;
@@ -19,6 +18,9 @@ public class BlockedUsersStoreFiller {
     private StreamsBuilderFactoryBean streamsBuilderFactoryBean;
     @Autowired
     KafkaOptions kafkaOptions;
+
+    @Autowired
+    StoreManager storeManager;
 
     @PostConstruct
     public void FillStore() {
@@ -31,17 +33,17 @@ public class BlockedUsersStoreFiller {
 
             // Обработка сообщений с доступом к State Store
             stream.process(() -> new Processor<>() {
-                private KeyValueStore<String, String> store;
 
                 @Override
                 public void init(ProcessorContext context) {
-                    this.store = context.getStateStore(kafkaOptions.stream.blockedUsersStoreName);
+                    storeManager.initBlockedUsersStore(context);
                 }
 
                 @Override
                 public void process(String key, String value) {
                     // Сохраняем сообщение в State Store
-                    store.put(key, value);
+                    storeManager.getProhibitedWordsStore().ifPresent(store ->
+                        store.put(key, value));
                     System.out.printf("В store добавлена блокировка пользователя: %s\n", value);
                 }
 
