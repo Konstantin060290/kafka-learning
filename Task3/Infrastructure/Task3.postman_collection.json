@@ -1,0 +1,95 @@
+{
+	"info": {
+		"_postman_id": "c4da5d7a-cc0c-49ab-acd6-c3ca57edc357",
+		"name": "Task3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29231288"
+	},
+	"item": [
+		{
+			"name": "Task3ProduceBlockedUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/block-user?userName=Vasya&blockedUser=Zhora2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"block-user"
+					],
+					"query": [
+						{
+							"key": "userName",
+							"value": "Vasya"
+						},
+						{
+							"key": "blockedUser",
+							"value": "Zhora"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task3ProduceBlockBadWord",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/add-prohibited-word?prohibitedWord=Badword",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"add-prohibited-word"
+					],
+					"query": [
+						{
+							"key": "prohibitedWord",
+							"value": "Badword"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Task3ProduceMessage",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"\",\r\n    \"from\": \"Zhora\",\r\n    \"to\": \"Vasya\",\r\n    \"body\": \"Privet Badword\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/produce-message",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"produce-message"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
