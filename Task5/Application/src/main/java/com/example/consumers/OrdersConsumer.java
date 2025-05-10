@@ -1,0 +1,42 @@
+package com.example.consumers;
+
+import com.example.configuration.KafkaOptions;
+import factories.KafkaConsumerFactory;
+import jakarta.annotation.PostConstruct;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.time.Duration;
+
+@Component
+public class OrdersConsumer {
+    @Autowired
+    private KafkaOptions _kafkaOptions;
+    @Autowired
+    private KafkaConsumerFactory _kafkaConsumerFactory;
+
+    @PostConstruct
+    public void ConsumeOrders() {
+
+        var consumer = _kafkaConsumerFactory.getConsumer(_kafkaOptions.consumer.ordersTopicName);
+
+        try {
+            while (true) {
+
+                try {
+                    ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));  // Получение сообщений
+                    for (ConsumerRecord<String, String> record : records) {
+                        System.out.printf("Получено сообщение: key = %s, value = %s, partition = %d, offset = %d%n",
+                                record.key(), record.value(), record.partition(), record.offset());
+                    }
+                } catch (Exception e) {
+                    System.out.print(e);
+                }
+            }
+        } finally {
+            consumer.close();
+        }
+    }
+}

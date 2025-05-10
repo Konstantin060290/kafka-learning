@@ -6,7 +6,16 @@
         <artifactId>Task5</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <artifactId>Infrastructure</artifactId>
-    <name>Infrastructure</name>
+    <artifactId>Application</artifactId>
+    <name>Application</name>
     <url>http://maven.apache.org</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>Common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 </project>
