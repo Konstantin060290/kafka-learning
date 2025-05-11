@@ -18,7 +18,7 @@ public class UsersConsumer {
     private KafkaConsumerFactory _kafkaConsumerFactory;
 
     @PostConstruct
-    public void ConsumeOrders() {
+    public void ConsumeUsers() {
 
         var consumer = _kafkaConsumerFactory.getConsumer(_kafkaOptions.consumer.usersTopicName);
 
