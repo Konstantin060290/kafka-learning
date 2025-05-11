@@ -6,6 +6,7 @@ import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -18,6 +19,10 @@ public class OrdersConsumer {
     private KafkaConsumerFactory _kafkaConsumerFactory;
 
     @PostConstruct
+    public void init() {
+        new Thread(this::ConsumeOrders).start();
+    }
+
     public void ConsumeOrders() {
 
         var consumer = _kafkaConsumerFactory.getConsumer(_kafkaOptions.consumer.ordersTopicName);
