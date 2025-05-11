@@ -1,4 +1,4 @@
-package factories;
+package com.example.factories;
 import com.example.configuration.KafkaOptions;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -13,6 +13,7 @@ import java.util.Properties;
 public class KafkaConsumerFactory {
     @Autowired
     private KafkaOptions _kafkaOptions;
+
     public KafkaConsumer<String, String> getConsumer(String topicName)
     {
         Properties props = new Properties();

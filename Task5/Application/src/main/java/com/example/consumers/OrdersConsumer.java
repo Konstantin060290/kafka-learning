@@ -1,7 +1,7 @@
 package com.example.consumers;
 
 import com.example.configuration.KafkaOptions;
-import factories.KafkaConsumerFactory;
+import com.example.factories.KafkaConsumerFactory;
 import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
