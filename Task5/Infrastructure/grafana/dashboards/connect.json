@@ -1925,7 +1925,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "kafka_producer_record_size_avg{clientId=\"connector-producer-postgres-source-0\",instance=\"kafka-connect:9876\"}",
+          "expr": "kafka_producer_record_size_avg{clientId=\"connector-producer-postgres-source-0\",instance=~\"$instance\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -2027,7 +2027,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "kafka_connect_connector_task_batch_size_avg{instance=\"kafka-connect:9876\",task=\"0\"}",
+          "expr": "kafka_connect_connector_task_batch_size_avg{instance=~\"$instance\",task=\"0\"}",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
@@ -2129,7 +2129,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "kafka_producer_records_per_request_avg{clientId=\"connector-producer-postgres-source-0\",instance=\"kafka-connect:9876\"}",
+          "expr": "kafka_producer_records_per_request_avg{clientId=\"connector-producer-postgres-source-0\",instance=~\"$instance\"}",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -2232,7 +2232,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "kafka_producer_topic_record_send_total{clientId=\"connector-producer-postgres-source-0\",instance=\"kafka-connect:9876\",topic=\"postgresql-jdbc-bulk-users\"}",
+          "expr": "kafka_producer_topic_record_send_total{clientId=\"connector-producer-pg-connector-0\",instance=~\"$instance\",topic=\"task5.public.users\"}",
           "format": "time_series",
           "instant": false,
           "interval": "",
@@ -2335,7 +2335,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "kafka_connect_source_task_poll_batch_avg_time_ms{instance=\"kafka-connect:9876\",task=\"0\"}",
+          "expr": "kafka_connect_source_task_poll_batch_avg_time_ms{instance=~\"$instance\",task=\"0\"}",
           "format": "time_series",
           "instant": false,
           "interval": "",

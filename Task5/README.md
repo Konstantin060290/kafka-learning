@@ -1,5 +1,5 @@
-Инструкции по запуску проекта через Docker Compose:
 
+Инструкции по запуску проекта через Docker Compose и проверке его работоспособности:
 1. Скопируйте полностью структуру модуля Infrastructure на машину, на которой будете разворачивать 
 инфраструктуру.
 2. C помощью команды 'sudo EXTERNAL_IP=localhost docker compose up -d' разверните инфраструктуру.
@@ -24,5 +24,17 @@ curl -X PUT -H 'Content-Type: application/json' --data @connector-truncate.json 
 8. Внесите необходимые изменения в application.properties, в частности для настройки kafka.cluster.bootstrap-servers
 замените localhost на ip адрес машины с развернутой kafka, если это требуется.
 9. Запустите java -jar ConsumersApp-1.0-SNAPSHOT.jar
-10. Добавьте в таблицы users, orders данные с помощью скриптов, аналогичных п. 5.
+10. Добавьте в таблицы users, orders базы task5 данные с помощью скриптов, аналогичных п. 5.
 11. В консоли приложения ConsumersApp должны появляться записи о прочтенных в kafka сообщениях.
+12. Перейдите в grafana http://localhost:3000 c помощь логин/пароль admin/admin. Замените пароль на свой.
+13. Перейдите в dashboard с метриками и убедитесь, что метрики отображаются http://localhost:3000/d/kafka-connect-overview-0/
+
+Настройки Debezium Connector:
+См. в ./Infrastructure/connector-truncate.json
+
+Назначение каждого компонента и их взаимосвязи:
+В модуле Application расположены консьюмеры Orders и Customers
+В модуле Common расположены классы конфигурации
+В модуле Infrastructure - инфраструктура проекта
+Модуль ConsumerApp - само приложение, которое подключается к kafka и читает сообщения из топиков users, orders.
+
