@@ -1,0 +1,138 @@
+version: "3.5"
+services:
+
+  kafka-0:
+    image: bitnami/kafka:3.7
+    container_name: kafka-0
+    user: root
+    restart: always
+    ports:
+      - "9094:9094"
+      - "19904:19904"
+    environment:
+      KAFKA_ENABLE_KRAFT: yes
+      ALLOW_PLAINTEXT_LISTENER: no
+      KAFKA_KRAFT_CLUSTER_ID: practicum
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: SSL
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:SSL,EXTERNAL:SSL,SSL:SSL"
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_CFG_NODE_ID: 0
+      KAFKA_CFG_LISTENERS: CONTROLLER://:9093,EXTERNAL://:9094,SSL://:19904
+      KAFKA_CFG_ADVERTISED_LISTENERS: EXTERNAL://172.24.244.98:9094,SSL://172.24.244.98:19904
+      KAFKA_CFG_SSL_KEYSTORE_FILENAME: kafka.keystore.jks
+      KAFKA_CFG_SSL_KEYSTORE_PASSWORD: 123456
+      KAFKA_CFG_SSL_KEY_PASSWORD: 123
+      KAFKA_CFG_SSL_TRUSTSTORE_FILENAME: kafka.truststore.jks
+      KAFKA_CFG_SSL_TRUSTSTORE_PASSWORD: 123456
+      KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+    volumes:
+      - kafka_0_data:/bitnami/kafka
+      - ./certs/kafka-0:/etc/kafka/secrets
+      - ./certs/kafka-0:/bitnami/kafka/config/certs
+    networks:
+      - proxynet
+
+  kafka-1:
+    image: bitnami/kafka:3.7
+    container_name: kafka-1
+    user: root
+    restart: always
+    ports:
+      - "9095:9095"
+      - "19905:19905"
+    environment:
+      KAFKA_ENABLE_KRAFT: yes
+      ALLOW_PLAINTEXT_LISTENER: no
+      KAFKA_KRAFT_CLUSTER_ID: practicum
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: SSL
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:SSL,EXTERNAL:SSL,SSL:SSL"
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_CFG_NODE_ID: 1
+      KAFKA_CFG_LISTENERS: CONTROLLER://:9093,EXTERNAL://:9095,SSL://:19905
+      KAFKA_CFG_ADVERTISED_LISTENERS: EXTERNAL://172.24.244.98:9095,SSL://172.24.244.98:19905
+      KAFKA_CFG_SSL_KEYSTORE_FILENAME: kafka.keystore.jks
+      KAFKA_CFG_SSL_KEYSTORE_PASSWORD: 123456
+      KAFKA_CFG_SSL_KEY_PASSWORD: 123
+      KAFKA_CFG_SSL_TRUSTSTORE_FILENAME: kafka.truststore.jks
+      KAFKA_CFG_SSL_TRUSTSTORE_PASSWORD: 123456
+      KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+    volumes:
+      - kafka_1_data:/bitnami/kafka
+      - ./certs/kafka-1:/etc/kafka/secrets
+      - ./certs/kafka-0:/bitnami/kafka/config/certs
+    networks:
+      - proxynet
+
+  kafka-2:
+    image: bitnami/kafka:3.7
+    container_name: kafka-2
+    user: root
+    restart: always
+    ports:
+      - "9096:9096"
+      - "19906:19906"
+    environment:
+      KAFKA_ENABLE_KRAFT: yes
+      ALLOW_PLAINTEXT_LISTENER: no
+      KAFKA_KRAFT_CLUSTER_ID: practicum
+      KAFKA_CFG_INTER_BROKER_LISTENER_NAME: SSL
+      KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: "CONTROLLER:SSL,EXTERNAL:SSL,SSL:SSL"
+      KAFKA_CFG_PROCESS_ROLES: broker,controller
+      KAFKA_CFG_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 0@kafka-0:9093,1@kafka-1:9093,2@kafka-2:9093
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_CFG_NODE_ID: 2
+      KAFKA_CFG_LISTENERS: CONTROLLER://:9093,EXTERNAL://:9096,SSL://:19906
+      KAFKA_CFG_ADVERTISED_LISTENERS: EXTERNAL://172.24.244.98:9096,SSL://172.24.244.98:19906
+      KAFKA_CFG_SSL_KEYSTORE_FILENAME: kafka.keystore.jks
+      KAFKA_CFG_SSL_KEYSTORE_PASSWORD: 123456
+      KAFKA_CFG_SSL_KEY_PASSWORD: 123
+      KAFKA_CFG_SSL_TRUSTSTORE_FILENAME: kafka.truststore.jks
+      KAFKA_CFG_SSL_TRUSTSTORE_PASSWORD: 123456
+      KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+    volumes:
+      - kafka_2_data:/bitnami/kafka
+      - ./certs/kafka-2:/etc/kafka/secrets
+      - ./certs/kafka-0:/bitnami/kafka/config/certs
+    networks:
+      - proxynet
+
+  ui:
+    image: provectuslabs/kafka-ui:v0.7.0
+    restart: always
+    container_name: kafka-ui
+    ports:
+      - "8085:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: kraft-ssl
+      KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: kafka-0:19904,kafka-1:19905,kafka-2:19906
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SSL
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION: /truststore/kafka.truststore.jks
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD: "123456"
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_LOCATION: /keystore/kafka.keystore.jks
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEYSTORE_PASSWORD: "123456"
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_KEY_PASSWORD: "123"
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ""
+      AUTH_TYPE: "LOGIN_FORM"
+      SPRING_SECURITY_USER_NAME: admin
+      SPRING_SECURITY_USER_PASSWORD: pass
+    volumes:
+      - ./certs/kafka-0/kafka.truststore.jks:/truststore/kafka.truststore.jks:ro
+      - ./certs/kafka-0/kafka.keystore.jks:/keystore/kafka.keystore.jks:ro
+    networks:
+      - proxynet
+
+networks:
+  proxynet:
+    name: proxynet
+
+volumes:
+  kafka_0_data:
+  kafka_1_data:
+  kafka_2_data:
