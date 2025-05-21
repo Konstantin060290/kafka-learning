@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ConsumersApp
 {
     @Autowired
-    public SimpleConsumer consumer;
+    public ConsumerTopic1 consumer;
 
     public static void main( String[] args )
     {

@@ -9,4 +9,7 @@ public class KafkaOptions {
     public Connection connection;
     @Autowired
     public Consumer consumer;
+
+    @Autowired
+    public Producer producer;
 }
