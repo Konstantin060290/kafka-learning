@@ -5,13 +5,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication()
-public class ConsumersApp
+public class App
 {
     @Autowired
     public ConsumerTopic1 consumer;
 
     public static void main( String[] args )
     {
-        SpringApplication.run(ConsumersApp.class, args);
+        SpringApplication.run(App.class, args);
     }
 }

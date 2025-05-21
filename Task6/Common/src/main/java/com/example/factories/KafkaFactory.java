@@ -67,7 +67,7 @@ public class KafkaFactory {
         properties.put(SaslConfigs.SASL_JAAS_CONFIG,
 
                 String.format("org.apache.kafka.common.security.plain.PlainLoginModule required " +
-                        "username=\"%s\" password=\"%s\";", _kafkaOptions.consumer.consumerLogin, _kafkaOptions.consumer.consumerPassword));
+                        "username=\"%s\" password=\"%s\";", _kafkaOptions.producer.login, _kafkaOptions.producer.password));
 
         var producer = new KafkaProducer<String, String>(properties);
 
