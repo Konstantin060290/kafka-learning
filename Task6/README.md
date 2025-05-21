@@ -15,7 +15,7 @@
 7. Поднимаем брокер:
 8. ![img.png](Infrastructure/Task6_1/start_broker_again.png)
 9. Проверим:
-![img.png](Infrastructure/Task6_1/img.png)
+![img.png](Infrastructure/Task6_1/check.png)
 
 Задание 2. Настройка защищённого соединения и управление доступом. Инструкция по проверке
 1. Скопируйте содержимое модуля Infrastructure/Task6_2 на машину, на которой планируется развернуть кластер kafka.
