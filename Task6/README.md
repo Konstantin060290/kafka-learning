@@ -1,9 +1,21 @@
 
 
 Задание 1. Балансировка партиций и диагностика кластера. Отчет о выполнении
-1. C помощью Infrastructure/Task6_1/docker-compose.yml поднята инфраструкта.
+1. C помощью Infrastructure/Task6_1/docker-compose.yml поднята инфраструктура.
 2. Создан топик:
-![img.png](img.png)
+![img_1.png](Infrastructure/Task6_1/create_topic.png)
+3. Подготовлен файл reassignment.json:
+![img.png](Infrastructure/Task6_1/reassignment_json.png)
+4. Сгенерирован план:
+![img.png](Infrastructure/Task6_1/generate_plan.png)
+5. Выполнено переназначение:
+![img.png](Infrastructure/Task6_1/reassign.png)
+6. Останавливаем брокер kafka-1:
+![img.png](Infrastructure/Task6_1/stop_kafka1.png)
+7. Поднимаем брокер:
+8. ![img.png](Infrastructure/Task6_1/start_broker_again.png)
+9. Проверим:
+![img.png](Infrastructure/Task6_1/img.png)
 
 Задание 2. Настройка защищённого соединения и управление доступом. Инструкция по проверке
 1. Скопируйте содержимое модуля Infrastructure/Task6_2 на машину, на которой планируется развернуть кластер kafka.
