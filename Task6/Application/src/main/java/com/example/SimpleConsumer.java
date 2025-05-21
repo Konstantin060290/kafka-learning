@@ -10,13 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Consumer {
+public class SimpleConsumer {
     @Autowired
     private KafkaOptions _kafkaOptions;
     @Autowired
     private KafkaConsumerFactory _kafkaConsumerFactory;
 
-    public Consumer() {
+    public SimpleConsumer() {
     }
 
     @PostConstruct
@@ -25,7 +25,7 @@ public class Consumer {
     }
 
     public void ConsumeUsers() {
-        KafkaConsumer<String, String> consumer = this._kafkaConsumerFactory.getConsumer(this._kafkaOptions.consumer.usersTopicName);
+        KafkaConsumer<String, String> consumer = this._kafkaConsumerFactory.getConsumer(this._kafkaOptions.consumer.topic1);
 
         try {
             while(true) {

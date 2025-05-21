@@ -1,7 +1,9 @@
 package com.example.factories;
 import com.example.configuration.KafkaOptions;
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,13 @@ public class KafkaConsumerFactory {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, _kafkaOptions.consumer.autoOffsetReset);        // Начало чтения с самого начала
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, _kafkaOptions.consumer.enableAutoCommit);           // Автоматический коммит смещений
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, _kafkaOptions.consumer.sessionTimeOut.toString());           // Время ожидания активности от консьюмера
+
+        // Конфигурация SASL
+        props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_PLAINTEXT");
+        props.put(SaslConfigs.SASL_MECHANISM, "PLAIN");
+        props.put(SaslConfigs.SASL_JAAS_CONFIG,
+                "org.apache.kafka.common.security.plain.PlainLoginModule required " +
+                        "username=\"consumer\" password=\"consumer-secret\";");
 
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 

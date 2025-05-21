@@ -13,8 +13,8 @@ public class Consumer {
     public Boolean enableAutoCommit;
     @Value("${kafka.consumer.session-timeout}")
     public Integer sessionTimeOut;
-    @Value("${kafka.consumer.orders-topic-name}")
-    public String ordersTopicName;
-    @Value("${kafka.consumer.users-topic-name}")
-    public String usersTopicName;
+    @Value("${kafka.consumer.topic1name}")
+    public String topic1;
+    @Value("${kafka.consumer.topic2name}")
+    public String topic2;
 }
