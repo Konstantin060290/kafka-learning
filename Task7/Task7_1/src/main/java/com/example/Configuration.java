@@ -2,6 +2,7 @@ package com.example;
 
 import org.springframework.beans.factory.annotation.Value;
 
+@org.springframework.context.annotation.Configuration
 public class Configuration
 {
     @Value("${kafka.cluster.bootstrap-servers}")

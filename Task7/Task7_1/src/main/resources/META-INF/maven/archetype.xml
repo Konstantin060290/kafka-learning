@@ -1,5 +1,5 @@
 <archetype>
-  <id>Task7</id>
+  <id>Task7_1</id>
   <sources>
     <source>src/main/java/App.java</source>
   </sources>

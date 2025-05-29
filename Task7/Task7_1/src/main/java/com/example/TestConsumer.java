@@ -16,7 +16,8 @@ public class TestConsumer {
 
     @PostConstruct
     public void init() {
-        (new Thread(this::Consume)).start();
+
+        //(new Thread(this::Consume)).start();
     }
     @Autowired
     Configuration configuration;
