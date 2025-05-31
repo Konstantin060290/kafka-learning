@@ -9,6 +9,7 @@
   <url>http://maven.apache.org</url>
   <modules>
     <module>Task7_1</module>
+    <module>Task7_2</module>
   </modules>
 
   <properties>
