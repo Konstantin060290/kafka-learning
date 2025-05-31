@@ -54,8 +54,6 @@ public class TestConsumer {
         props.put("ssl.truststore.location", configuration.trustStoreLocation);
         props.put("ssl.truststore.password", configuration.trustStorePwd);
 
-        //props.put("schema.registry.url", configuration.schemaRegistryUrl);
-
         Consumer<String, String> consumer = new KafkaConsumer<String, String>(props);
         return consumer;
     }
