@@ -1,0 +1,1 @@
+kafka-console-producer.bat --bootstrap-server kafka-1:9093 --topic goods-topic < "D:\kafka\files\Goods.json" --producer.config "D:\kafka\files\kafka_client.properties"
