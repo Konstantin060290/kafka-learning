@@ -1,13 +1,17 @@
 package com.example;
 
+import com.example.commands.SearchCommand;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.Console;
 import java.util.Scanner;
 
 @Component
 public class Input {
+
+    @Autowired
+    SearchCommand _searchCommand;
 
     @PostConstruct
     public void Input(){
@@ -28,18 +32,14 @@ public class Input {
             try {
                 switch (input) {
                     case "1":
-                        if (parts.length > 1) {
-                            searchCommand.execute(parts[1]);
-                        } else {
-                            System.out.println("Please provide product name");
-                        }
+                        _searchCommand.Search();
                         break;
                     case "2":
-                        if (parts.length > 1) {
-                            recommendCommand.execute(parts[1]);
-                        } else {
-                            System.out.println("Please provide user ID");
-                        }
+//                        if (parts.length > 1) {
+//                            recommendCommand.execute(parts[1]);
+//                        } else {
+//                            System.out.println("Please provide user ID");
+//                        }
                         break;
                     default:
                         System.out.println("Unknown command");

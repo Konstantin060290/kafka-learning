@@ -12,6 +12,7 @@
     <module>Infrastructure</module>
       <module>ClientApi</module>
     <module>Domain</module>
+    <module>Application</module>
   </modules>
 
   <properties>
