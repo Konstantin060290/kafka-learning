@@ -4,7 +4,6 @@ import com.example.repositories.ProductsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 @Component
@@ -23,13 +22,17 @@ public class SearchCommand {
 
         //отправим в kafka поисковый запрос
 
-        var products = _productsRepository.findByName(input).toArray();
+        var products = _productsRepository.findByName(input);
 
-        if (products.length == 0) {
+        if (products.isEmpty()) {
             System.out.println("No products found with name: " + input);
         } else {
             System.out.println("Found products:");
-            Arrays.stream(products).forEach(System.out::println);
+            products.forEach(p -> System.out.println(
+                    "ID: " + p.getId() +
+                            ", Name: " + p.getName() +
+                            ", Rest Info: " + p.getRestInformation()
+            ));
         }
     }
 }
