@@ -10,6 +10,8 @@
 
   <modules>
     <module>Infrastructure</module>
+      <module>ClientApi</module>
+    <module>Domain</module>
   </modules>
 
   <properties>
