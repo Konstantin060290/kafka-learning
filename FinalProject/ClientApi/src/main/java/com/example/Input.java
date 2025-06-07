@@ -10,8 +10,8 @@ import java.util.Scanner;
 @Component
 public class Input {
 
-    @Autowired
-    SearchCommand _searchCommand;
+//    @Autowired
+//    SearchCommand _searchCommand;
 
     @PostConstruct
     public void Input(){
@@ -32,7 +32,7 @@ public class Input {
             try {
                 switch (input) {
                     case "1":
-                        _searchCommand.Search();
+                        //_searchCommand.Search();
                         break;
                     case "2":
 //                        if (parts.length > 1) {
