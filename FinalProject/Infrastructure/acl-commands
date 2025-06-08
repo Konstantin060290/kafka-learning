@@ -1,0 +1,1 @@
+kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic users-search-requests

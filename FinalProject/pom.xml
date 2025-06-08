@@ -13,6 +13,7 @@
       <module>ClientApi</module>
     <module>Domain</module>
     <module>Application</module>
+    <module>Common</module>
   </modules>
 
   <properties>

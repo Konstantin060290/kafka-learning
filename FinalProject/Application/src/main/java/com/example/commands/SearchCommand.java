@@ -1,6 +1,7 @@
 package com.example.commands;
 
 import com.example.repositories.ProductsRepository;
+import com.examples.kafka.Producer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,9 @@ public class SearchCommand {
     @Autowired
     ProductsRepository _productsRepository;
 
+    @Autowired
+    Producer _clientApiProducer;
+
     public void Search()
     {
         Scanner scanner = new Scanner(System.in);
@@ -20,7 +24,7 @@ public class SearchCommand {
 
         String input = scanner.nextLine();
 
-        //отправим в kafka поисковый запрос
+        _clientApiProducer.Produce(input, "users-search-requests");
 
         var products = _productsRepository.findByName(input);
 
