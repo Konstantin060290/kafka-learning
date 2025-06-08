@@ -1,7 +1,13 @@
 package com.examples.kafka;
 
 import com.example.CommonKafkaOptions;
+import com.example.ProductContract;
 import com.example.ProductsConsumerOptions;
+import com.example.models.Product;
+import com.example.repositories.ProductsRepository;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -12,6 +18,8 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
@@ -23,6 +31,9 @@ public class ProductsConsumer {
 
     @Autowired
     ProductsConsumerOptions productsConsumerOptions;
+
+    @Autowired
+    ProductsRepository productsRepository;
 
     @PostConstruct
     public void init() {
@@ -53,6 +64,11 @@ public class ProductsConsumer {
 
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 
+        // Создаем ObjectMapper один раз (лучше вынести в поле класса)
+        ObjectMapper objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule()) // для поддержки Instant
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
         // Подписка на топик
         consumer.subscribe(Collections.singletonList("filtered-products"));
 
@@ -60,6 +76,16 @@ public class ProductsConsumer {
         {
             try {
                 for(ConsumerRecord<String, String> record : consumer.poll(Duration.ofMillis(100L))) {
+
+                    ProductContract productContract = objectMapper.readValue(record.value(), ProductContract.class);
+
+                    var product = new Product();
+                    product.setProductId(productContract.getProductId());
+                    product.setName(productContract.getName());
+                    product.setRestInformation(record.value());
+
+                    productsRepository.save(product);
+
                     System.out.printf("Получено сообщение: key = %s, value = %s, partition = %d, offset = %d%n", record.key(), record.value(), record.partition(), record.offset());
                 }
             } catch (Exception e) {

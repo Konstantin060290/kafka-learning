@@ -15,6 +15,7 @@
     <module>Application</module>
     <module>Common</module>
     <module>ProductsFilter</module>
+      <module>Contracts</module>
   </modules>
 
   <properties>

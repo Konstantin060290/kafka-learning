@@ -35,11 +35,6 @@ public class Input {
                         _searchCommand.Search();
                         break;
                     case "2":
-//                        if (parts.length > 1) {
-//                            recommendCommand.execute(parts[1]);
-//                        } else {
-//                            System.out.println("Please provide user ID");
-//                        }
                         break;
                     default:
                         System.out.println("Unknown command");
