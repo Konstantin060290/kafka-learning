@@ -1,5 +1,5 @@
 <archetype>
-  <id>ProductsFilter</id>
+  <id>com.example.ProductsFilter</id>
   <sources>
     <source>src/main/java/App.java</source>
   </sources>

@@ -7,7 +7,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <artifactId>ProductsFilter</artifactId>
-    <name>Archetype - ProductsFilter</name>
+    <name>Archetype - com.example.ProductsFilter</name>
     <url>http://maven.apache.org</url>
 
     <dependencies>

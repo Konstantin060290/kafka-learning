@@ -10,7 +10,7 @@
 
   <modules>
     <module>Infrastructure</module>
-      <module>ClientApi</module>
+    <module>ClientApi</module>
     <module>Domain</module>
     <module>Application</module>
     <module>Common</module>

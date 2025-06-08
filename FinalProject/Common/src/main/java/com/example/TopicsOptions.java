@@ -14,4 +14,7 @@ public class TopicsOptions {
 
     @Value("${topic-names.filtered-products}")
     public String filteredProductsTopicName;
+
+    @Value("${topic-names.blocked-products}")
+    public String blockedProductsTopicName;
 }
