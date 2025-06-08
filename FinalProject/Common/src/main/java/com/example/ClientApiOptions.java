@@ -5,8 +5,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ClientApiOptions {
-    @Value("${client-api.bootstrap-servers}")
-    public String bootstrapServers;
     @Value("${client-api.producer-user}")
     public String producerUser;
     @Value("${client-api.producer-password}")
@@ -23,8 +21,4 @@ public class ClientApiOptions {
     public Integer maxInFlightRequestsPerConnection;
     @Value("${client-api.producer.enable-idempotence}")
     public Boolean enableIdempotence;
-    @Value("${client-api.security-protocol}")
-    public String securityProtocol;
-    @Value("${client-api.sasl-mechanism}")
-    public String saslMechanism;
 }

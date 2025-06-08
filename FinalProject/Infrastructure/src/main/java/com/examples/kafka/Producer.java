@@ -1,6 +1,7 @@
 package com.examples.kafka;
 
 import com.example.ClientApiOptions;
+import com.example.CommonKafkaOptions;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -19,12 +20,15 @@ public class Producer {
     @Autowired
     ClientApiOptions configuration;
 
+    @Autowired
+    CommonKafkaOptions kafkaOptions;
+
     public void Produce(String message, String topicName) {
 
         try {
 
             Properties properties = new Properties();
-            properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.bootstrapServers); // Адреса брокеров Kafka
+            properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaOptions.bootstrapServers); // Адреса брокеров Kafka
             properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
             properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
             properties.put(ProducerConfig.MAX_BLOCK_MS_CONFIG, configuration.maxBlocksMs.toString()); // Макс. время ожидания метаданных
@@ -37,8 +41,8 @@ public class Producer {
             properties.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, configuration.enableIdempotence); // Идемпотентность
 
             // Конфигурация SASL
-            properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, configuration.securityProtocol);
-            properties.put(SaslConfigs.SASL_MECHANISM, configuration.saslMechanism);
+            properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, kafkaOptions.securityProtocol);
+            properties.put(SaslConfigs.SASL_MECHANISM, kafkaOptions.saslMechanism);
             properties.put(SaslConfigs.SASL_JAAS_CONFIG,
 
                     String.format("org.apache.kafka.common.security.plain.PlainLoginModule required " +
