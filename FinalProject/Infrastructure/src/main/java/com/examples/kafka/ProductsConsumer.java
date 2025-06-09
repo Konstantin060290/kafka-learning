@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -16,10 +17,9 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
@@ -35,11 +35,9 @@ public class ProductsConsumer {
     @Autowired
     ProductsRepository productsRepository;
 
+    @Transactional
+    @Async
     @PostConstruct
-    public void init() {
-        (new Thread(this::ConsumeProducts)).start();
-    }
-
     public void ConsumeProducts() {
 
         Properties props = new Properties();
