@@ -16,6 +16,7 @@
     <module>Common</module>
     <module>ProductsFilter</module>
       <module>Contracts</module>
+      <module>AnalyticsService</module>
   </modules>
 
   <properties>
@@ -69,6 +70,12 @@
       <artifactId>lombok</artifactId>
       <version>1.18.38</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.4.7</version>
     </dependency>
 
   </dependencies>
