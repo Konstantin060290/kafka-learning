@@ -33,9 +33,7 @@ public class RequestsConsumer {
     @Autowired
     ProductsConsumerOptions productsConsumerOptions;
 
-    @Transactional
-    @Async
-    @PostConstruct
+    //@PostConstruct
     public void ConsumeRequests() {
 
         Properties props = new Properties();
@@ -63,18 +61,23 @@ public class RequestsConsumer {
         // Подписка на топик
         consumer.subscribe(Collections.singletonList("source.users-search-requests"));
 
-        String hdfsUri = "hdfs://172.29.43.99:8020";
+        String hdfsUri = "hdfs://172.29.43.99:9000";
         Configuration conf = new Configuration();
         conf.set("fs.defaultFS", hdfsUri);
+        conf.set("dfs.replication", "1");
+        conf.set("dfs.client.use.datanode.hostname", "true");
+        conf.set("dfs.datanode.use.datanode.hostname", "false");
+        conf.set("hadoop.security.authentication", "simple");
 
-        try (FileSystem hdfs = FileSystem.get(new URI(hdfsUri), conf, "root")) {
+
+        try (FileSystem hdfs = FileSystem.get(new URI(hdfsUri), conf, "kos")) {
             while (true) {
                 try {
                     for (ConsumerRecord<String, String> record : consumer.poll(Duration.ofMillis(100L))) {
 
                         System.out.printf("Получено сообщение: key = %s, value = %s, partition = %d, offset = %d%n", record.key(), record.value(), record.partition(), record.offset());
 
-                        String hdfsFilePath = "/data/message_" + UUID.randomUUID();
+                        String hdfsFilePath = "/user-requests/message_" + UUID.randomUUID();
                         Path path = new Path(hdfsFilePath);
 
                         // Запись файла в HDFS
@@ -86,7 +89,7 @@ public class RequestsConsumer {
 
                     }
                 } catch (Exception e) {
-                    System.out.print(e);
+                     System.out.print(e);
                 }
             }
 

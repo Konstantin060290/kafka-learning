@@ -7,13 +7,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-@EnableAsync
+//@EnableAsync
 @SpringBootApplication()
 @ComponentScan("com.examples.kafka")
 public class AnalyticService {
 
+//    @Autowired
+//    RequestsConsumer requestsConsumer;
+
     @Autowired
-    RequestsConsumer requestsConsumer;
+    HadoopDataAnalyser hadoopDataAnalyser;
 
     public static void main( String[] args )
     {
