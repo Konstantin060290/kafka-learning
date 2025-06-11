@@ -40,11 +40,11 @@ products с помощью консольной утилиты kafka-console-pro
 4. Убедитесь, что в grafana отображаются метрики кластера kafka;
 5. В основном кластере Kafka создайте топики products, filtered-products, blocked-products, products-recommendation, users-search-requests
 Топики можно создать, например с помощью kafka-ui. Number of partitions -3, Min In Sync Replicas -3, Replication Factor - 3;
-6. Убедитесь, что указанные топики реплицируются на mirror кластер.
+6. Убедитесь, что указанные топики реплицируются на mirror кластер;
 7. Назначьте права доступа ACL с помощью команд, указанных в ./Infrastructure/acl-commands.txt;
-8. С помощью pgadmin подключите postgres и убедитесь, что была создана база client-api, при отсутствии создайте ее.
-9. Соберите проект mvn clean install.
-10. На машину, где будут использоваться приложения AnalyticsService, ClientApi, ProductsFilter требуется установить сертификаты из ./Infrastructure/full/certs.
+8. С помощью pgadmin подключите postgres и убедитесь, что была создана база client-api, при отсутствии создайте ее;
+9. Соберите проект mvn clean install;
+10. На машину, где будут использоваться приложения AnalyticsService, ClientApi, ProductsFilter требуется установить сертификаты из ./Infrastructure/full/certs;
 11. В DNS машины из. п. 10 необходимо указать ip адрес машины, где разворачивалась инфраструктура.
     <ip_machine> kafka-1
     <ip_machine> kafka-2
@@ -55,14 +55,14 @@ products с помощью консольной утилиты kafka-console-pro
     <ip_machine> hadoop-namenode
     <ip_machine> hadoop-datanode-1
     <ip_machine> hadoop-datanode-2
-    <ip_machine> hadoop-datanode-3
+    <ip_machine> hadoop-datanode-3;
 12. Запустите сервисы java -jar AnalyticsService-1.0-SNAPSHOT.jar, java -jar ClientApi-1.0-SNAPSHOT.jar, java -jar ProductsFilter-1.0-SNAPSHOT.jar,
-    ProductsFilter-1.0-SNAPSHOT.jar. Предварительно откорректируйте application.properties для каждого приложения, если это необходимо.
-13. Попробуйте отправить товары с помощью файла и консольной утилиты kafka-console-producer.bat, предварительно скачав ее https://kafka.apache.org/downloads
-14. Убедитесь, что товары попадаю в топик filtered-products;
+    ProductsFilter-1.0-SNAPSHOT.jar. Предварительно откорректируйте application.properties для каждого приложения, если это необходимо;
+13. Попробуйте отправить товары с помощью файла и консольной утилиты kafka-console-producer.bat, предварительно скачав ее https://kafka.apache.org/downloads ;
+14. Убедитесь, что товары попадают в топик filtered-products;
 15. В приложении ProductsFilter добавьте товар в блокируемые, с помощью ввода имени в консоль;
 16. Повторите п. 13 с запрещенным товаром. Убедитесь, что товар не попал в filtered-products;
-17. С помощью ClientApi поищите товар минимум 3 раза.
+17. С помощью ClientApi поищите товар минимум 3 раза;
 18. С помощью ClientApi получите рекомендацию товара, выбрав соответствующую в консоли команду.
 
 ## Выводы:
