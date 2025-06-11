@@ -1,3 +1,0 @@
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic users-search-requests
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper2:2181 --add --allow-principal User:producer   --operation ALL   --topic hdfs-connect-offse
-ts   --topic hdfs-connect-config   --topic hdfs-connect-status   --group hdfs-connect-cluster
