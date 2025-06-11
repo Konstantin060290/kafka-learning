@@ -1,57 +1,64 @@
 package com.example;
 
+import com.examples.kafka.Producer;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import jakarta.annotation.PostConstruct;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static org.apache.spark.sql.functions.count;
-import static org.apache.spark.sql.functions.sum;
+import java.util.List;
+
+import static org.apache.spark.sql.functions.*;
 
 @Component
 public class HadoopDataAnalyser {
 
+    @Autowired
+    Producer producer;
+
     @PostConstruct
-    void Start()
-    {
+    void Start() throws JsonProcessingException {
         SparkConf conf = new SparkConf()
-                .setAppName("Hadoop Analytics with Java")
-                .setMaster("yarn") // или "local" для локального режима
+                .setAppName("Hadoop Analytics")
+                .setMaster("yarn")
                 .set("fs.defaultFS", "hdfs://172.29.43.99:9000")
                 .set("spark.driver.extraJavaOptions", "-Dlog4j.configurationFile=file:src/main/resources/log4j2-null.xml");
 
-        // Создание SparkSession
         SparkSession spark = SparkSession.builder()
                 .config(conf)
-                //.config("spark.driver.extraJavaOptions", "-Dlog4j.configuration=file:log4j-off.properties")
-                //.config("spark.executor.extraJavaOptions", "-Dlog4j.configuration=file:log4j-off.properties")
                 .getOrCreate();
 
-        //JavaSparkContext jsc = new JavaSparkContext(spark.sparkContext());
-
         // Чтение данных
-        Dataset<Row> sales = spark.read()
+        Dataset<Row> requests = spark.read()
                 .option("header", "true")
                 .option("inferSchema", "true")
                 .json("hdfs:///user-requests");
 
         // Анализ данных
-        Dataset<Row> salesByRegion = sales.groupBy("region")
-                .agg(
-                        sum("amount").alias("total_sales"),
-                        count("transaction_id").alias("num_transactions")
-                );
+        Dataset<Row> productCounts = requests.groupBy("productName").agg(count("*").alias("request_count"));;
 
-        // Сохранение результатов
-        salesByRegion.write()
-                .parquet("hdfs://results/sales_by_region.parquet");
+        Dataset<Row> topProducts = productCounts.orderBy(desc("requestCount")).limit(3);
 
-        // Вывод результатов
-        salesByRegion.show();
+        List<String> jsonList = topProducts.toJSON().collectAsList();
+
+        ObjectMapper mapper = new ObjectMapper();
+        ArrayNode arrayNode = mapper.createArrayNode();
+
+        for (String jsonStr : jsonList) {
+            arrayNode.add(mapper.readTree(jsonStr));
+        }
+
+        String finalJsonArray = mapper.writeValueAsString(arrayNode);
 
         spark.stop();
+
+        producer.Produce(finalJsonArray, "products-recommendations");
     }
 
 }

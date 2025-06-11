@@ -2,14 +2,18 @@ package com.examples.kafka;
 
 import com.example.CommonKafkaOptions;
 import com.example.ProductContract;
+import com.example.ProductSearch;
 import com.example.ProductsConsumerOptions;
 import com.example.models.Product;
-import com.example.repositories.ProductsRepository;
+import com.example.models.Recommendation;
+import com.example.repositories.RecommendationsRepository;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -17,15 +21,16 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
+import java.util.UUID;
 
 @Component
-public class ProductsConsumer {
+public class AnalyticsConsumer {
     @Autowired
     CommonKafkaOptions kafkaOptions;
 
@@ -33,16 +38,13 @@ public class ProductsConsumer {
     ProductsConsumerOptions productsConsumerOptions;
 
     @Autowired
-    ProductsRepository productsRepository;
+    RecommendationsRepository recommendationsRepository;
 
-    @Transactional
-    @Async
-    @PostConstruct
-    public void ConsumeProducts() {
+    public void ConsumeRequests() {
 
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaOptions.bootstrapServers);  // Адреса брокеров Kafka
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, productsConsumerOptions.consumerGroupId);        // Уникальный идентификатор группы
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "consumer-group-1");        // Уникальный идентификатор группы
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, productsConsumerOptions.autoOffsetReset);        // Начало чтения с самого начала
@@ -67,23 +69,21 @@ public class ProductsConsumer {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         // Подписка на топик
-        consumer.subscribe(Collections.singletonList("filtered-products"));
+        consumer.subscribe(Collections.singletonList("products-recommendations"));
 
-        while (true)
-        {
+        while (true) {
             try {
-                for(ConsumerRecord<String, String> record : consumer.poll(Duration.ofMillis(100L))) {
-
-                    ProductContract productContract = objectMapper.readValue(record.value(), ProductContract.class);
-
-                    var product = new Product();
-                    product.setProductId(productContract.getProductId());
-                    product.setName(productContract.getName());
-                    product.setRestInformation(record.value());
-
-                    productsRepository.save(product);
+                for (ConsumerRecord<String, String> record : consumer.poll(Duration.ofMillis(100L))) {
 
                     System.out.printf("Получено сообщение: key = %s, value = %s, partition = %d, offset = %d%n", record.key(), record.value(), record.partition(), record.offset());
+
+                    ProductSearch productSearch = objectMapper.readValue(record.value(), ProductSearch.class);
+
+                    var recommendation = new Recommendation();
+                    recommendation.setName(productSearch.productName);
+
+                    recommendationsRepository.save(recommendation);
+
                 }
             } catch (Exception e) {
                 System.out.print(e);

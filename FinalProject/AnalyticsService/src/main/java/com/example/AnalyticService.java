@@ -12,8 +12,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @ComponentScan("com.examples.kafka")
 public class AnalyticService {
 
-//    @Autowired
-//    RequestsConsumer requestsConsumer;
+    @Autowired
+    RequestsConsumer requestsConsumer;
 
     @Autowired
     HadoopDataAnalyser hadoopDataAnalyser;

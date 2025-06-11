@@ -1,5 +1,6 @@
 package com.example;
 
+import com.example.commands.GetRecommendationsQuery;
 import com.example.commands.SearchCommand;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,9 @@ public class Input {
 
     @Autowired
     SearchCommand _searchCommand;
+
+    @Autowired
+    GetRecommendationsQuery _getRecommendationsQuery;
 
     @PostConstruct
     public void Input(){
@@ -35,6 +39,7 @@ public class Input {
                         _searchCommand.Search();
                         break;
                     case "2":
+                        _getRecommendationsQuery.GetRecommendations();
                         break;
                     default:
                         System.out.println("Unknown command");
