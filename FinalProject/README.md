@@ -37,8 +37,9 @@ products с помощью консольной утилиты kafka-console-pro
 ![AlertsPrometheus.png](Images/AlertsPrometheus.png)
 ![Alerts.png](Images/Alerts.png)
 ![TelegramAlerts.png](Images/TelegramAlerts.png)
+
 Метрики основного кластера:
-![Metrics.png](Images/Metrics.png)ера:
+![Metrics.png](Images/Metrics.png)
 ![img.png](Images/Metrics-general.png)
 
 ## Порядок разворачивания:
