@@ -46,15 +46,17 @@ products с помощью консольной утилиты kafka-console-pro
 1. Скопируйте содержимое папки ./Infrastructure/full на машину на которой планируется разворачивание инфраструктуры;
 2. Осуществите подъем контейнеров с помощью команды docker compose up -d;
 3. Убедитесь что разворачивание прошло успешно и в логах каждого из сервисов нет ошибок с помощью команды docker logs <container_name>
-4. Убедитесь, что в grafana отображаются метрики кластера kafka;
-5. В основном кластере Kafka создайте топики products, filtered-products, blocked-products, products-recommendation, users-search-requests
+4. Перейдите в развернутую grafana http://<ip_machine>:3000/ и смените дефолтный пароль. Подключите источник данных prometheus http://<ip_machine>:9090
+5. Из папки ./Infrastructure загрузите dashboard KafkaDashboard.json
+6. Убедитесь, что в grafana отображаются метрики кластера kafka;
+7. В основном кластере Kafka создайте топики products, filtered-products, blocked-products, products-recommendation, users-search-requests
 Топики можно создать, например с помощью kafka-ui. Number of partitions -3, Min In Sync Replicas -3, Replication Factor - 3;
-6. Убедитесь, что указанные топики реплицируются на mirror кластер;
-7. Назначьте права доступа ACL с помощью команд, указанных в ./Infrastructure/acl-commands.txt;
-8. С помощью pgadmin подключите postgres и убедитесь, что была создана база client-api, при отсутствии создайте ее;
-9. Соберите проект mvn clean install;
-10. На машину, где будут использоваться приложения AnalyticsService, ClientApi, ProductsFilter требуется установить сертификаты из ./Infrastructure/full/certs;
-11. В DNS машины из. п. 10 необходимо указать ip адрес машины, где разворачивалась инфраструктура.
+8. Убедитесь, что указанные топики реплицируются на mirror кластер;
+9. Назначьте права доступа ACL с помощью команд, указанных в ./Infrastructure/acl-commands.txt;
+10. С помощью pgadmin подключите postgres и убедитесь, что была создана база client-api, при отсутствии создайте ее;
+11. Соберите проект mvn clean install;
+12. На машину, где будут использоваться приложения AnalyticsService, ClientApi, ProductsFilter требуется установить сертификаты из ./Infrastructure/full/certs;
+13. В DNS машины из. п. 10 необходимо указать ip адрес машины, где разворачивалась инфраструктура.
     <ip_machine> kafka-1
     <ip_machine> kafka-2
     <ip_machine> kafka-3
@@ -65,16 +67,17 @@ products с помощью консольной утилиты kafka-console-pro
     <ip_machine> hadoop-datanode-1
     <ip_machine> hadoop-datanode-2
     <ip_machine> hadoop-datanode-3;
-12. Запустите сервисы java -jar AnalyticsService-1.0-SNAPSHOT.jar, java -jar ClientApi-1.0-SNAPSHOT.jar, java -jar ProductsFilter-1.0-SNAPSHOT.jar,
+14. Запустите сервисы java -jar AnalyticsService-1.0-SNAPSHOT.jar, java -jar ClientApi-1.0-SNAPSHOT.jar, java -jar ProductsFilter-1.0-SNAPSHOT.jar,
     ProductsFilter-1.0-SNAPSHOT.jar. Предварительно откорректируйте application.properties для каждого приложения, если это необходимо;
-13. Попробуйте отправить товары с помощью файла и консольной утилиты kafka-console-producer.bat, предварительно скачав ее https://kafka.apache.org/downloads ;
-14. Убедитесь, что товары попадают в топик filtered-products;
-15. В приложении ProductsFilter добавьте товар в блокируемые, с помощью ввода имени в консоль;
-16. Повторите п. 13 с запрещенным товаром. Убедитесь, что товар не попал в filtered-products;
-17. С помощью ClientApi поищите товар минимум 3 раза;
-18. С помощью ClientApi получите рекомендацию товара, выбрав соответствующую в консоли команду.
+15. Попробуйте отправить товары с помощью файла и консольной утилиты kafka-console-producer.bat, предварительно скачав ее https://kafka.apache.org/downloads ;
+16. Убедитесь, что товары попадают в топик filtered-products;
+17. В приложении ProductsFilter добавьте товар в блокируемые, с помощью ввода имени в консоль;
+18. Повторите п. 13 с запрещенным товаром. Убедитесь, что товар не попал в filtered-products;
+19. С помощью ClientApi поищите товар минимум 3 раза;
+20. С помощью ClientApi получите рекомендацию товара, выбрав соответствующую в консоли команду.
 
 ## Выводы:
 В ходе выполнения работы была реализована система электронной коммерции. Развернут SASL_SSL кластер, выполнена его репликация на mirror кластер.
 Реализована потоковая обработка данных, фильтрация товаров. Выполнен вариант простейшей аналитики и выдачи рекомендаций товаров.
+Организован мониторинг системы, визуализация метрик, а также алертинг в телеграм.
 Настоящая система выполнена с рядом упрощений, но в случае последующих доводок может являться основой production системы для электронной коммерции.
