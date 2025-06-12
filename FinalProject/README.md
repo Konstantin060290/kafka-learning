@@ -32,6 +32,14 @@ products с помощью консольной утилиты kafka-console-pro
 
 - Кластер Hadoop из трех datanode для хранения поисковых запросов из mirror кластера kafka.
 ![HadoopDatanodes.png](Images/HadoopDatanodes.png)
+- Связка prometheus/alertmanager/grafana для сбора метрик, визуализации характеристик кластера, а также повышения скорости реагирования
+на проблемы с кластером за счет отправки алертов в telegram.
+![AlertsPrometheus.png](Images/AlertsPrometheus.png)
+![Alerts.png](Images/Alerts.png)
+![TelegramAlerts.png](Images/TelegramAlerts.png)
+Метрики основного кластера:
+![Metrics.png](Images/Metrics.png)ера:
+![img.png](Images/Metrics-general.png)
 
 ## Порядок разворачивания:
 1. Скопируйте содержимое папки ./Infrastructure/full на машину на которой планируется разворачивание инфраструктуры;
