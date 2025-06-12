@@ -1,15 +1,13 @@
-
-
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic users-search-requests
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic products
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic filtered-products
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic blocked-products
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic products-recommendations
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:consumer --operation Read --topic users-search-requests
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:consumer --operation Read --topic products
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:consumer --operation Read --topic filtered-products
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:consumer --operation Read --topic blocked-products
-kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:consumer --operation Read --topic products-recommendations
+KAFKA_OPTS="" kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic users-search-requests
+KAFKA_OPTS="" kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic products
+KAFKA_OPTS="" kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic filtered-products
+KAFKA_OPTS="" kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic blocked-products
+KAFKA_OPTS="" kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:producer --operation Read --operation Write --topic products-recommendations
+KAFKA_OPTS="" kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:consumer --operation Read --topic users-search-requests
+KAFKA_OPTS="" kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:consumer --operation Read --topic products
+KAFKA_OPTS="" kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:consumer --operation Read --topic filtered-products
+KAFKA_OPTS="" kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:consumer --operation Read --topic blocked-products
+KAFKA_OPTS="" kafka-acls --authorizer-properties zookeeper.connect=zookeeper:2181 --add --allow-principal User:consumer --operation Read --topic products-recommendations
 
 kafka-acls --authorizer-properties zookeeper.connect=zookeeper2:2181 --add --allow-principal User:consumer --operation Read --topic source.users-search-requests
 kafka-acls --authorizer-properties zookeeper.connect=zookeeper2:2181 --add --allow-principal User:producer   --operation ALL   --topic hdfs-connect-offsets   --topic hdfs-connect-config   --topic hdfs-connect-status   --group hdfs-connect-cluster

@@ -11,4 +11,8 @@ public class CommonKafkaOptions {
     public String securityProtocol;
     @Value("${kafka.sasl-mechanism}")
     public String saslMechanism;
+    @Value("${kafka.trust-store-location}")
+    public String trustStoreLocation;
+    @Value("${kafka.trust-store-password}")
+    public String trustStorePassword;
 }

@@ -15,8 +15,8 @@ public class AnalyticService {
     @Autowired
     RequestsConsumer requestsConsumer;
 
-    @Autowired
-    HadoopDataAnalyser hadoopDataAnalyser;
+//    @Autowired
+//    HadoopDataAnalyser hadoopDataAnalyser;
 
     public static void main( String[] args )
     {

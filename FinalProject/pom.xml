@@ -15,9 +15,8 @@
     <module>Application</module>
     <module>Common</module>
     <module>ProductsFilter</module>
-      <module>Contracts</module>
-      <module>AnalyticsService</module>
-    <module>test</module>
+    <module>Contracts</module>
+    <module>AnalyticsService</module>
   </modules>
 
   <properties>

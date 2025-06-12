@@ -48,8 +48,8 @@ public class Producer {
                     String.format("org.apache.kafka.common.security.plain.PlainLoginModule required " +
                             "username=\"%s\" password=\"%s\";", configuration.producerUser, configuration.producerPwd));
 
-            properties.put("ssl.truststore.location", "D:\\kafka\\files\\kafka.truststore.jks");
-            properties.put("ssl.truststore.password", "123456");
+            properties.put("ssl.truststore.location", kafkaOptions.trustStoreLocation);
+            properties.put("ssl.truststore.password", kafkaOptions.trustStorePassword);
 
             var producer = new KafkaProducer<String, String>(properties);
 

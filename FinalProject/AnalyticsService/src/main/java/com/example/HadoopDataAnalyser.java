@@ -27,7 +27,7 @@ public class HadoopDataAnalyser {
         SparkConf conf = new SparkConf()
                 .setAppName("Hadoop Analytics")
                 .setMaster("yarn")
-                .set("fs.defaultFS", "hdfs://172.29.43.99:9000")
+                .set("fs.defaultFS", "hdfs://hadoop-namenode:9000")
                 .set("spark.driver.extraJavaOptions", "-Dlog4j.configurationFile=file:src/main/resources/log4j2-null.xml");
 
         SparkSession spark = SparkSession.builder()

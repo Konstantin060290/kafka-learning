@@ -57,8 +57,8 @@ public class ProductsConsumer {
                 String.format("org.apache.kafka.common.security.plain.PlainLoginModule required " +
                         "username=\"%s\" password=\"%s\";", productsConsumerOptions.consumerLogin, productsConsumerOptions.consumerPwd));
 
-        props.put("ssl.truststore.location", "D:\\kafka\\files\\kafka.truststore.jks");
-        props.put("ssl.truststore.password", "123456");
+        props.put("ssl.truststore.location", kafkaOptions.trustStoreLocation);
+        props.put("ssl.truststore.password", kafkaOptions.trustStorePassword);
 
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 

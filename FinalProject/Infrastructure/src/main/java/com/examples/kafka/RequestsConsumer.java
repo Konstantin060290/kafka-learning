@@ -33,7 +33,7 @@ public class RequestsConsumer {
     @Autowired
     ProductsConsumerOptions productsConsumerOptions;
 
-    //@PostConstruct
+    @PostConstruct
     public void ConsumeRequests() {
 
         Properties props = new Properties();
@@ -53,15 +53,15 @@ public class RequestsConsumer {
                 String.format("org.apache.kafka.common.security.plain.PlainLoginModule required " +
                         "username=\"%s\" password=\"%s\";", productsConsumerOptions.consumerLogin, productsConsumerOptions.consumerPwd));
 
-        props.put("ssl.truststore.location", "D:\\kafka\\files\\kafka.truststore.jks");
-        props.put("ssl.truststore.password", "123456");
+        props.put("ssl.truststore.location", kafkaOptions.trustStoreLocation);
+        props.put("ssl.truststore.password", kafkaOptions.trustStorePassword);
 
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 
         // Подписка на топик
         consumer.subscribe(Collections.singletonList("source.users-search-requests"));
 
-        String hdfsUri = "hdfs://172.29.43.99:9000";
+        String hdfsUri = "hdfs://hadoop-namenode:9000";
         Configuration conf = new Configuration();
         conf.set("fs.defaultFS", hdfsUri);
         conf.set("dfs.replication", "1");
@@ -70,7 +70,7 @@ public class RequestsConsumer {
         conf.set("hadoop.security.authentication", "simple");
 
 
-        try (FileSystem hdfs = FileSystem.get(new URI(hdfsUri), conf, "kos")) {
+        try (FileSystem hdfs = FileSystem.get(new URI(hdfsUri), conf, "root")) {
             while (true) {
                 try {
                     for (ConsumerRecord<String, String> record : consumer.poll(Duration.ofMillis(100L))) {
