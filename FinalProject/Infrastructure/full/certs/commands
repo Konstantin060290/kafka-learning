@@ -1,0 +1,105 @@
+	sudo openssl req -new \
+    -newkey rsa:2048 \
+    -keyout kafka-1/kafka-1.key \
+    -out kafka-1/kafka-1.csr \
+    -config kafka-1/kafka-1.cnf \
+    -nodes
+	
+	sudo openssl req -new \
+    -newkey rsa:2048 \
+    -keyout kafka-2/kafka-2.key \
+    -out kafka-2/kafka-2.csr \
+    -config kafka-2/kafka-2.cnf \
+    -nodes
+	
+	sudo openssl req -new \
+    -newkey rsa:2048 \
+    -keyout kafka-3/kafka-3.key \
+    -out kafka-3/kafka-3.csr \
+    -config kafka-3/kafka-3.cnf \
+    -nodes
+	
+	sudo openssl req -new \
+    -newkey rsa:2048 \
+    -keyout kafka-4/kafka-4.key \
+    -out kafka-4/kafka-4.csr \
+    -config kafka-4/kafka-4.cnf \
+    -nodes
+	
+	sudo openssl req -new \
+    -newkey rsa:2048 \
+    -keyout kafka-5/kafka-5.key \
+    -out kafka-5/kafka-5.csr \
+    -config kafka-5/kafka-5.cnf \
+    -nodes
+	
+	sudo openssl req -new \
+    -newkey rsa:2048 \
+    -keyout kafka-6/kafka-6.key \
+    -out kafka-6/kafka-6.csr \
+    -config kafka-6/kafka-6.cnf \
+    -nodes
+
+
+_______________________________________
+
+
+sudo openssl x509 -req \
+    -days 3650 \
+    -in kafka-1/kafka-1.csr \
+    -CA ca.crt \
+    -CAkey ca.key \
+    -CAcreateserial \
+    -out kafka-1/kafka-1.crt \
+    -extfile kafka-1/kafka-1.cnf \
+    -extensions v3_req 
+	
+	sudo openssl x509 -req \
+    -days 3650 \
+    -in kafka-2/kafka-2.csr \
+    -CA ca.crt \
+    -CAkey ca.key \
+    -CAcreateserial \
+    -out kafka-2/kafka-2.crt \
+    -extfile kafka-2/kafka-2.cnf \
+    -extensions v3_req 
+	
+	sudo openssl x509 -req \
+    -days 3650 \
+    -in kafka-3/kafka-3.csr \
+    -CA ca.crt \
+    -CAkey ca.key \
+    -CAcreateserial \
+    -out kafka-3/kafka-3.crt \
+    -extfile kafka-3/kafka-3.cnf \
+    -extensions v3_req 
+	
+	sudo openssl x509 -req \
+    -days 3650 \
+    -in kafka-4/kafka-4.csr \
+    -CA ca.crt \
+    -CAkey ca.key \
+    -CAcreateserial \
+    -out kafka-4/kafka-4.crt \
+    -extfile kafka-4/kafka-4.cnf \
+    -extensions v3_req 
+	
+	sudo openssl x509 -req \
+    -days 3650 \
+    -in kafka-5/kafka-5.csr \
+    -CA ca.crt \
+    -CAkey ca.key \
+    -CAcreateserial \
+    -out kafka-5/kafka-5.crt \
+    -extfile kafka-5/kafka-5.cnf \
+    -extensions v3_req 
+	
+	sudo openssl x509 -req \
+    -days 3650 \
+    -in kafka-6/kafka-6.csr \
+    -CA ca.crt \
+    -CAkey ca.key \
+    -CAcreateserial \
+    -out kafka-6/kafka-6.crt \
+    -extfile kafka-6/kafka-6.cnf \
+    -extensions v3_req 
