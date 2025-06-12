@@ -42,6 +42,9 @@ products с помощью консольной утилиты kafka-console-pro
 ![Metrics.png](Images/Metrics.png)
 ![img.png](Images/Metrics-general.png)
 
+Запущенные сервисы инфраструктуры:
+![StartedContainers.png](Images/StartedContainers.png)
+
 ## Порядок разворачивания:
 1. Скопируйте содержимое папки ./Infrastructure/full на машину на которой планируется разворачивание инфраструктуры;
 2. Осуществите подъем контейнеров с помощью команды docker compose up -d;
